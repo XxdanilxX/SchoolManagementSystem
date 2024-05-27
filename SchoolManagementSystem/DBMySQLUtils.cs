@@ -13,7 +13,7 @@ namespace SchoolManagementSystem
                 GetDBConnection(string host, int port, string database, string username, string password)
         {
             String connString = "Server=" + host + ";Database=" + database
-                + ";port=" + port + ";User Id=" + username + ";password= " + password;
+                + ";port=" + port + ";User Id=" + username + ";password=" + password;
 
             MySqlConnection conn = new MySqlConnection(connString);
 

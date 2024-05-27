@@ -26,7 +26,7 @@ namespace SchoolManagementSystem
             }
             else
             {
-                MessageBox.Show("Invalid login or password.");
+                MessageBox.Show("Невірний логін або пароль.");
             }
         }
 
@@ -40,17 +40,27 @@ namespace SchoolManagementSystem
             try
             {
                 connection.Open();
-                string query = "SELECT COUNT(1) FROM Authorization WHERE Логін = @login AND Пароль = @password";
+                string query = @"
+                    SELECT COUNT(1) 
+                    FROM Authorization 
+                    WHERE Login = @login 
+                      AND Password = @password";
                 MySqlCommand command = new MySqlCommand(query, connection);
                 command.Parameters.AddWithValue("@login", login);
                 command.Parameters.AddWithValue("@password", hashedPassword);
 
                 int count = Convert.ToInt32(command.ExecuteScalar());
                 isAuthenticated = count == 1;
+
+                // Відладочне повідомлення
+                if (!isAuthenticated)
+                {
+                    MessageBox.Show("Аутентифікація не вдалася. Перевірте логін та пароль.");
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred: " + ex.Message);
+                MessageBox.Show("Сталася помилка: " + ex.Message);
             }
             finally
             {
@@ -64,7 +74,7 @@ namespace SchoolManagementSystem
         {
             using (System.Security.Cryptography.SHA256 sha256Hash = System.Security.Cryptography.SHA256.Create())
             {
-                byte[] bytes = sha256Hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(rawData));
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < bytes.Length; i++)
                 {
@@ -73,6 +83,7 @@ namespace SchoolManagementSystem
                 return builder.ToString();
             }
         }
+
         private void exitButton_Click(object sender, EventArgs e)
         {
             Application.Exit();
