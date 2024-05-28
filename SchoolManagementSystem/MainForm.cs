@@ -192,7 +192,7 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                string query = "SELECT * FROM Students WHERE StudentGroup = @StudentGroup";
+                string query = "SELECT * FROM Students WHERE StudentGroup = @StudentGroup OR Class = @StudentGroup";
                 MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
                 da.SelectCommand.Parameters.AddWithValue("@StudentGroup", filterStudentsTextBox.Text);
                 DataTable dt = new DataTable();
@@ -460,14 +460,33 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                string query = "SELECT * FROM Tasks WHERE TaskType LIKE @Filter OR Description LIKE @Filter";
+                string query = @"
+            SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
+                   t.StudentID, t.TeacherID, s.Class, s.StudentGroup
+            FROM Tasks t
+            JOIN Students s ON t.StudentID = s.StudentID
+            WHERE s.Class = @Class AND s.StudentGroup = @StudentGroup";
                 MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
-                da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filterTasksTextBox.Text + "%");
+
+                string[] filterParts = filterTasksTextBox.Text.Split(new char[] { ' ' }, 2);
+                if (filterParts.Length == 2)
+                {
+                    da.SelectCommand.Parameters.AddWithValue("@Class", filterParts[0]);
+                    da.SelectCommand.Parameters.AddWithValue("@StudentGroup", filterParts[1]);
+                }
+                else
+                {
+                    MessageBox.Show("Будь ласка, введіть клас та групу у правильному форматі (наприклад, '10 A').");
+                    return;
+                }
+
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 tasksGridView.DataSource = dt;
             }
         }
+
+
 
         private void tasksGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {

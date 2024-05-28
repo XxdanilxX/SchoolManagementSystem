@@ -99,14 +99,14 @@
 
         private void InitializeComponent()
         {
-            studentNameLabel = new Label(); // Новий лейбл для імені студента
-            studentClassLabel = new Label(); // Новий лейбл для класу студента
-            studentGroupLabel = new Label(); // Новий лейбл для групи студента
-            teacherNameLabel = new Label(); // Новий лейбл для імені вчителя
-            studentNameTextBox = new TextBox(); // Нове текстове поле для імені студента
-            studentClassTextBox = new TextBox(); // Нове текстове поле для класу студента
-            studentGroupTextBox = new TextBox(); // Нове текстове поле для групи студента
-            teacherNameTextBox = new TextBox(); // Нове текстове поле для імені вчителя
+            studentNameLabel = new Label();
+            studentClassLabel = new Label();
+            studentGroupLabel = new Label();
+            teacherNameLabel = new Label();
+            studentNameTextBox = new TextBox();
+            studentClassTextBox = new TextBox();
+            studentGroupTextBox = new TextBox();
+            teacherNameTextBox = new TextBox();
             tabControl1 = new TabControl();
             addStudentTab = new TabPage();
             filterStudentsLabel = new Label();
@@ -148,18 +148,10 @@
             teachersGridView = new DataGridView();
             addGradeTab = new TabPage();
             studentIdLabel = new Label();
-            studentNameLabel = new Label();
-            studentClassLabel = new Label();
-            studentGroupLabel = new Label();
-            teacherNameLabel = new Label();
             teacherIdLabel = new Label();
             gradeLabel = new Label();
             dateAssignedLabel = new Label();
             studentIdTextBox = new TextBox();
-            studentNameTextBox = new TextBox();
-            studentClassTextBox = new TextBox();
-            studentGroupTextBox = new TextBox();
-            teacherNameTextBox = new TextBox();
             teacherIdTextBox = new TextBox();
             gradeTextBox = new TextBox();
             dateAssignedPicker = new DateTimePicker();
@@ -192,6 +184,12 @@
             filterTasksButton = new Button();
             deleteTaskButton = new Button();
             updateTaskButton = new Button();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            label5 = new Label();
+            label6 = new Label();
             tabControl1.SuspendLayout();
             addStudentTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)studentsGridView).BeginInit();
@@ -202,6 +200,70 @@
             addTaskTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tasksGridView).BeginInit();
             SuspendLayout();
+            // 
+            // studentNameLabel
+            // 
+            studentNameLabel.Location = new Point(39, 66);
+            studentNameLabel.Name = "studentNameLabel";
+            studentNameLabel.Size = new Size(100, 23);
+            studentNameLabel.TabIndex = 14;
+            studentNameLabel.Text = "Ім'я учня:";
+            // 
+            // studentClassLabel
+            // 
+            studentClassLabel.Location = new Point(39, 99);
+            studentClassLabel.Name = "studentClassLabel";
+            studentClassLabel.Size = new Size(100, 23);
+            studentClassLabel.TabIndex = 15;
+            studentClassLabel.Text = "Клас:";
+            // 
+            // studentGroupLabel
+            // 
+            studentGroupLabel.Location = new Point(39, 132);
+            studentGroupLabel.Name = "studentGroupLabel";
+            studentGroupLabel.Size = new Size(100, 23);
+            studentGroupLabel.TabIndex = 16;
+            studentGroupLabel.Text = "Група:";
+            // 
+            // teacherNameLabel
+            // 
+            teacherNameLabel.Location = new Point(39, 165);
+            teacherNameLabel.Name = "teacherNameLabel";
+            teacherNameLabel.Size = new Size(100, 23);
+            teacherNameLabel.TabIndex = 17;
+            teacherNameLabel.Text = "Ім'я вчителя:";
+            // 
+            // studentNameTextBox
+            // 
+            studentNameTextBox.Location = new Point(224, 62);
+            studentNameTextBox.Name = "studentNameTextBox";
+            studentNameTextBox.ReadOnly = true;
+            studentNameTextBox.Size = new Size(195, 27);
+            studentNameTextBox.TabIndex = 18;
+            // 
+            // studentClassTextBox
+            // 
+            studentClassTextBox.Location = new Point(224, 95);
+            studentClassTextBox.Name = "studentClassTextBox";
+            studentClassTextBox.ReadOnly = true;
+            studentClassTextBox.Size = new Size(195, 27);
+            studentClassTextBox.TabIndex = 19;
+            // 
+            // studentGroupTextBox
+            // 
+            studentGroupTextBox.Location = new Point(224, 128);
+            studentGroupTextBox.Name = "studentGroupTextBox";
+            studentGroupTextBox.ReadOnly = true;
+            studentGroupTextBox.Size = new Size(195, 27);
+            studentGroupTextBox.TabIndex = 20;
+            // 
+            // teacherNameTextBox
+            // 
+            teacherNameTextBox.Location = new Point(224, 161);
+            teacherNameTextBox.Name = "teacherNameTextBox";
+            teacherNameTextBox.ReadOnly = true;
+            teacherNameTextBox.Size = new Size(195, 27);
+            teacherNameTextBox.TabIndex = 21;
             // 
             // tabControl1
             // 
@@ -217,6 +279,7 @@
             // 
             // addStudentTab
             // 
+            addStudentTab.Controls.Add(label1);
             addStudentTab.Controls.Add(filterStudentsLabel);
             addStudentTab.Controls.Add(filterStudentsTextBox);
             addStudentTab.Controls.Add(filterStudentsButton);
@@ -244,65 +307,6 @@
             // 
             // filterStudentsLabel
             // 
-            // Налаштування для нових лейблів та текстових полів
-            studentNameLabel.Location = new Point(39, 66);
-            studentNameLabel.Name = "studentNameLabel";
-            studentNameLabel.Size = new Size(100, 23);
-            studentNameLabel.TabIndex = 14;
-            studentNameLabel.Text = "Ім'я учня:";
-
-            studentClassLabel.Location = new Point(39, 99);
-            studentClassLabel.Name = "studentClassLabel";
-            studentClassLabel.Size = new Size(100, 23);
-            studentClassLabel.TabIndex = 15;
-            studentClassLabel.Text = "Клас:";
-
-            studentGroupLabel.Location = new Point(39, 132);
-            studentGroupLabel.Name = "studentGroupLabel";
-            studentGroupLabel.Size = new Size(100, 23);
-            studentGroupLabel.TabIndex = 16;
-            studentGroupLabel.Text = "Група:";
-
-            teacherNameLabel.Location = new Point(39, 165);
-            teacherNameLabel.Name = "teacherNameLabel";
-            teacherNameLabel.Size = new Size(100, 23);
-            teacherNameLabel.TabIndex = 17;
-            teacherNameLabel.Text = "Ім'я вчителя:";
-
-            studentNameTextBox.Location = new Point(224, 62);
-            studentNameTextBox.Name = "studentNameTextBox";
-            studentNameTextBox.Size = new Size(195, 27);
-            studentNameTextBox.TabIndex = 18;
-            studentNameTextBox.ReadOnly = true;
-
-            studentClassTextBox.Location = new Point(224, 95);
-            studentClassTextBox.Name = "studentClassTextBox";
-            studentClassTextBox.Size = new Size(195, 27);
-            studentClassTextBox.TabIndex = 19;
-            studentClassTextBox.ReadOnly = true;
-
-            studentGroupTextBox.Location = new Point(224, 128);
-            studentGroupTextBox.Name = "studentGroupTextBox";
-            studentGroupTextBox.Size = new Size(195, 27);
-            studentGroupTextBox.TabIndex = 20;
-            studentGroupTextBox.ReadOnly = true;
-
-            teacherNameTextBox.Location = new Point(224, 161);
-            teacherNameTextBox.Name = "teacherNameTextBox";
-            teacherNameTextBox.Size = new Size(195, 27);
-            teacherNameTextBox.TabIndex = 21;
-            teacherNameTextBox.ReadOnly = true;
-
-            // Додавання контролів на форму
-            addGradeTab.Controls.Add(studentNameLabel);
-            addGradeTab.Controls.Add(studentClassLabel);
-            addGradeTab.Controls.Add(studentGroupLabel);
-            addGradeTab.Controls.Add(teacherNameLabel);
-            addGradeTab.Controls.Add(studentNameTextBox);
-            addGradeTab.Controls.Add(studentClassTextBox);
-            addGradeTab.Controls.Add(studentGroupTextBox);
-            addGradeTab.Controls.Add(teacherNameTextBox);
-
             filterStudentsLabel.Location = new Point(565, 35);
             filterStudentsLabel.Name = "filterStudentsLabel";
             filterStudentsLabel.Size = new Size(132, 23);
@@ -454,6 +458,7 @@
             // 
             // addTeacherTab
             // 
+            addTeacherTab.Controls.Add(label2);
             addTeacherTab.Controls.Add(filterTeachersLabel);
             addTeacherTab.Controls.Add(filterTeachersTextBox);
             addTeacherTab.Controls.Add(filterTeachersButton);
@@ -606,15 +611,17 @@
             // teachersGridView
             // 
             teachersGridView.ColumnHeadersHeight = 29;
-            teachersGridView.Location = new Point(8, 221);
+            teachersGridView.Location = new Point(8, 228);
             teachersGridView.Name = "teachersGridView";
             teachersGridView.RowHeadersWidth = 51;
-            teachersGridView.Size = new Size(829, 301);
+            teachersGridView.Size = new Size(829, 294);
             teachersGridView.TabIndex = 11;
             teachersGridView.CellDoubleClick += teachersGridView_CellDoubleClick;
             // 
             // addGradeTab
             // 
+            addGradeTab.Controls.Add(label4);
+            addGradeTab.Controls.Add(label3);
             addGradeTab.Controls.Add(studentIdLabel);
             addGradeTab.Controls.Add(studentNameLabel);
             addGradeTab.Controls.Add(studentClassLabel);
@@ -651,38 +658,6 @@
             studentIdLabel.TabIndex = 0;
             studentIdLabel.Text = "ID учня:";
             // 
-            // studentNameLabel
-            // 
-            studentNameLabel.Location = new Point(39, 66);
-            studentNameLabel.Name = "studentNameLabel";
-            studentNameLabel.Size = new Size(100, 23);
-            studentNameLabel.TabIndex = 14;
-            studentNameLabel.Text = "Ім'я учня:";
-            // 
-            // studentClassLabel
-            // 
-            studentClassLabel.Location = new Point(39, 99);
-            studentClassLabel.Name = "studentClassLabel";
-            studentClassLabel.Size = new Size(100, 23);
-            studentClassLabel.TabIndex = 15;
-            studentClassLabel.Text = "Клас:";
-            // 
-            // studentGroupLabel
-            // 
-            studentGroupLabel.Location = new Point(39, 132);
-            studentGroupLabel.Name = "studentGroupLabel";
-            studentGroupLabel.Size = new Size(100, 23);
-            studentGroupLabel.TabIndex = 16;
-            studentGroupLabel.Text = "Група:";
-            // 
-            // teacherNameLabel
-            // 
-            teacherNameLabel.Location = new Point(39, 165);
-            teacherNameLabel.Name = "teacherNameLabel";
-            teacherNameLabel.Size = new Size(100, 23);
-            teacherNameLabel.TabIndex = 17;
-            teacherNameLabel.Text = "Ім'я вчителя:";
-            // 
             // teacherIdLabel
             // 
             teacherIdLabel.Location = new Point(39, 198);
@@ -703,7 +678,7 @@
             // 
             dateAssignedLabel.Location = new Point(39, 264);
             dateAssignedLabel.Name = "dateAssignedLabel";
-            dateAssignedLabel.Size = new Size(135, 23);
+            dateAssignedLabel.Size = new Size(154, 23);
             dateAssignedLabel.TabIndex = 3;
             dateAssignedLabel.Text = "Дата виставлення:";
             // 
@@ -714,34 +689,6 @@
             studentIdTextBox.Size = new Size(195, 27);
             studentIdTextBox.TabIndex = 4;
             studentIdTextBox.Leave += studentIdTextBox_Leave;
-            // 
-            // studentNameTextBox
-            // 
-            studentNameTextBox.Location = new Point(224, 62);
-            studentNameTextBox.Name = "studentNameTextBox";
-            studentNameTextBox.Size = new Size(195, 27);
-            studentNameTextBox.TabIndex = 18;
-            // 
-            // studentClassTextBox
-            // 
-            studentClassTextBox.Location = new Point(224, 95);
-            studentClassTextBox.Name = "studentClassTextBox";
-            studentClassTextBox.Size = new Size(195, 27);
-            studentClassTextBox.TabIndex = 19;
-            // 
-            // studentGroupTextBox
-            // 
-            studentGroupTextBox.Location = new Point(224, 128);
-            studentGroupTextBox.Name = "studentGroupTextBox";
-            studentGroupTextBox.Size = new Size(195, 27);
-            studentGroupTextBox.TabIndex = 20;
-            // 
-            // teacherNameTextBox
-            // 
-            teacherNameTextBox.Location = new Point(224, 161);
-            teacherNameTextBox.Name = "teacherNameTextBox";
-            teacherNameTextBox.Size = new Size(195, 27);
-            teacherNameTextBox.TabIndex = 21;
             // 
             // teacherIdTextBox
             // 
@@ -820,6 +767,8 @@
             // 
             // addTaskTab
             // 
+            addTaskTab.Controls.Add(label6);
+            addTaskTab.Controls.Add(label5);
             addTaskTab.Controls.Add(taskTypeLabel);
             addTaskTab.Controls.Add(descriptionLabel);
             addTaskTab.Controls.Add(statusLabel);
@@ -1021,6 +970,54 @@
             updateTaskButton.Text = "Оновити";
             updateTaskButton.Click += updateTaskButton_Click;
             // 
+            // label1
+            // 
+            label1.Location = new Point(443, 159);
+            label1.Name = "label1";
+            label1.Size = new Size(394, 79);
+            label1.TabIndex = 12;
+            label1.Text = "Увага: Для фільтрації учнів введіть значення у поле фільтрування та натисніть кнопку \"Фільтрувати\". Наприклад, введіть \"A\" або \"10\"";
+            // 
+            // label2
+            // 
+            label2.Location = new Point(431, 144);
+            label2.Name = "label2";
+            label2.Size = new Size(406, 81);
+            label2.TabIndex = 12;
+            label2.Text = "Увага: Для фільтрації вчителів введіть частину або повне ім'я чи прізвище у поле фільтрування та натисніть кнопку \"Фільтрувати\". Наприклад, введіть \"Іван\"";
+            // 
+            // label3
+            // 
+            label3.Location = new Point(584, 11);
+            label3.Name = "label3";
+            label3.Size = new Size(154, 23);
+            label3.TabIndex = 22;
+            label3.Text = "Додайте фільтр:";
+            // 
+            // label4
+            // 
+            label4.Location = new Point(455, 128);
+            label4.Name = "label4";
+            label4.Size = new Size(379, 106);
+            label4.TabIndex = 23;
+            label4.Text = "Увага: Для фільтрації оцінок введіть частину або повне ім'я учня чи вчителя у поле фільтрування та натисніть кнопку \"Фільтрувати\". Наприклад, введіть \"Петров\"";
+            // 
+            // label5
+            // 
+            label5.Location = new Point(574, 22);
+            label5.Name = "label5";
+            label5.Size = new Size(130, 23);
+            label5.TabIndex = 20;
+            label5.Text = "Додайте фільтр:";
+            // 
+            // label6
+            // 
+            label6.Location = new Point(451, 174);
+            label6.Name = "label6";
+            label6.Size = new Size(386, 89);
+            label6.TabIndex = 21;
+            label6.Text = "Увага: Для фільтрації завдань введіть номер класу та групи у поле фільтрування через пробіл та натисніть кнопку \"Фільтрувати\". Наприклад, введіть \"10 A\"";
+            // 
             // MainForm
             // 
             ClientSize = new Size(853, 556);
@@ -1042,5 +1039,12 @@
             ((System.ComponentModel.ISupportInitialize)tasksGridView).EndInit();
             ResumeLayout(false);
         }
+
+        private Label label1;
+        private Label label2;
+        private Label label4;
+        private Label label3;
+        private Label label6;
+        private Label label5;
     }
 }
