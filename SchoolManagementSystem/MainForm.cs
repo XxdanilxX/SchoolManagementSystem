@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
@@ -7,20 +8,106 @@ namespace SchoolManagementSystem
 {
     public partial class MainForm : Form
     {
-        public MainForm()
+        private string role;
+        private string userLogin;
+        private string userId;
+
+        public MainForm(string role, string userLogin, string userId)
         {
             InitializeComponent();
+            this.role = role;
+            this.userLogin = userLogin;
+            this.userId = userId;
+            this.Load += new EventHandler(MainForm_Load);
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            ConfigureAccessBasedOnRole();
+            LoadData();
+        }
+
+        private void ConfigureAccessBasedOnRole()
+        {
+            switch (role)
+            {
+                case "Admin":
+                    // Адміністратор має доступ до всіх функцій
+                    break;
+                case "Teacher":
+                    ConfigureTeacherAccess();
+                    break;
+                case "Student":
+                    ConfigureStudentAccess();
+                    break;
+            }
+        }
+
+        private void ConfigureTeacherAccess()
+        {
+            if (studentsGridView.Columns.Contains("StudentIdentifier"))
+            {
+                studentsGridView.Columns["StudentIdentifier"].Visible = false;
+            }
+
+            addStudentButton.Enabled = false;
+            updateStudentButton.Enabled = false;
+            deleteStudentButton.Enabled = false;
+
+            if (teachersGridView.Columns.Contains("TeacherIdentifier"))
+            {
+                teachersGridView.Columns["TeacherIdentifier"].Visible = false;
+            }
+
+            addTeacherButton.Enabled = false;
+            updateTeacherButton.Enabled = false;
+            deleteTeacherButton.Enabled = false;
+
+            teacherIdTextBox.Enabled = false;
+            teacherIdTextBox.Text = userId; // Використання id вчителя
+
+            teacherIdTaskTextBox.Enabled = false;
+            teacherIdTaskTextBox.Text = userId; // Використання id вчителя
+        }
+
+        private void ConfigureStudentAccess()
+        {
+            if (studentsGridView.Columns.Contains("StudentIdentifier"))
+            {
+                studentsGridView.Columns["StudentIdentifier"].Visible = false;
+            }
+
+            addStudentButton.Enabled = false;
+            updateStudentButton.Enabled = false;
+            deleteStudentButton.Enabled = false;
+
+            if (teachersGridView.Columns.Contains("TeacherIdentifier"))
+            {
+                teachersGridView.Columns["TeacherIdentifier"].Visible = false;
+            }
+
+            addTeacherButton.Enabled = false;
+            updateTeacherButton.Enabled = false;
+            deleteTeacherButton.Enabled = false;
+
+            studentIdTextBox.Text = userId; // Використання id учня
+            studentIdTextBox.Enabled = false;
+
+            // Заблокувати всі кнопки крім фільтрувати у формі Виставлення оцінок
+            addGradeButton.Enabled = false;
+            updateGradeButton.Enabled = false;
+            deleteGradeButton.Enabled = false;
+
+            // Завантажити тільки завдання для цього учня
+            LoadTasksDataForStudent();
+        }
+
+        private void LoadData()
+        {
             LoadStudentsData();
             LoadTeachersData();
             LoadGradesData();
             LoadTasksData();
-
-            this.FormClosed += new FormClosedEventHandler(MainForm_FormClosed);
-        }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Application.Exit();
         }
 
         private void LoadStudentsData()
@@ -33,14 +120,10 @@ namespace SchoolManagementSystem
                 da.Fill(dt);
                 studentsGridView.DataSource = dt;
 
-                // Налаштовуємо заголовки стовпців
-                studentsGridView.Columns["StudentID"].HeaderText = "ID";
-                studentsGridView.Columns["LastName"].HeaderText = "Прізвище";
-                studentsGridView.Columns["FirstName"].HeaderText = "Ім'я";
-                studentsGridView.Columns["BirthDate"].HeaderText = "Дата народження";
-                studentsGridView.Columns["Class"].HeaderText = "Клас";
-                studentsGridView.Columns["StudentGroup"].HeaderText = "Група";
-                studentsGridView.Columns["StudentIdentifier"].HeaderText = "Ідентифікатор";
+                if (role == "Teacher" || role == "Student")
+                {
+                    studentsGridView.Columns["StudentIdentifier"].Visible = false;
+                }
             }
         }
 
@@ -54,13 +137,10 @@ namespace SchoolManagementSystem
                 da.Fill(dt);
                 teachersGridView.DataSource = dt;
 
-                // Налаштовуємо заголовки стовпців
-                teachersGridView.Columns["TeacherID"].HeaderText = "ID";
-                teachersGridView.Columns["LastName"].HeaderText = "Прізвище";
-                teachersGridView.Columns["FirstName"].HeaderText = "Ім'я";
-                teachersGridView.Columns["Subject"].HeaderText = "Предмет";
-                teachersGridView.Columns["Qualification"].HeaderText = "Кваліфікація";
-                teachersGridView.Columns["TeacherIdentifier"].HeaderText = "Ідентифікатор";
+                if (role == "Teacher" || role == "Student")
+                {
+                    teachersGridView.Columns["TeacherIdentifier"].Visible = false;
+                }
             }
         }
 
@@ -70,28 +150,29 @@ namespace SchoolManagementSystem
             {
                 conn.Open();
                 string query = @"
-            SELECT g.GradeID, g.StudentID, CONCAT(s.FirstName, ' ', s.LastName) AS StudentName, 
-                   s.Class AS StudentClass, s.StudentGroup, 
-                   CONCAT(t.FirstName, ' ', t.LastName) AS TeacherName, g.TeacherID, 
-                   g.Grade, g.DateAssigned
-            FROM Grades g
-            JOIN Students s ON g.StudentID = s.StudentID
-            JOIN Teachers t ON g.TeacherID = t.TeacherID";
+                    SELECT g.GradeID, g.StudentID, CONCAT(s.FirstName, ' ', s.LastName) AS StudentName, 
+                           s.Class AS StudentClass, s.StudentGroup, 
+                           CONCAT(t.FirstName, ' ', t.LastName) AS TeacherName, g.TeacherID, 
+                           g.Grade, g.DateAssigned
+                    FROM Grades g
+                    JOIN Students s ON g.StudentID = s.StudentID
+                    JOIN Teachers t ON g.TeacherID = t.TeacherID";
+
+                if (role == "Student")
+                {
+                    query += " WHERE g.StudentID = @StudentID";
+                }
+
                 MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
+
+                if (role == "Student")
+                {
+                    da.SelectCommand.Parameters.AddWithValue("@StudentID", userId);
+                }
+
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 gradesGridView.DataSource = dt;
-
-                // Налаштовуємо заголовки стовпців
-                gradesGridView.Columns["GradeID"].HeaderText = "ID";
-                gradesGridView.Columns["StudentID"].HeaderText = "ID учня";
-                gradesGridView.Columns["StudentName"].HeaderText = "Ім'я учня";
-                gradesGridView.Columns["StudentClass"].HeaderText = "Клас";
-                gradesGridView.Columns["StudentGroup"].HeaderText = "Група";
-                gradesGridView.Columns["TeacherName"].HeaderText = "Ім'я вчителя";
-                gradesGridView.Columns["TeacherID"].HeaderText = "ID вчителя";
-                gradesGridView.Columns["Grade"].HeaderText = "Оцінка";
-                gradesGridView.Columns["DateAssigned"].HeaderText = "Дата виставлення";
             }
         }
 
@@ -105,25 +186,35 @@ namespace SchoolManagementSystem
                            t.StudentID, t.TeacherID, s.Class, s.StudentGroup
                     FROM Tasks t
                     JOIN Students s ON t.StudentID = s.StudentID";
+
                 MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 tasksGridView.DataSource = dt;
-
-                // Налаштовуємо заголовки стовпців
-                tasksGridView.Columns["TaskID"].HeaderText = "ID";
-                tasksGridView.Columns["TaskType"].HeaderText = "Тип завдання";
-                tasksGridView.Columns["Description"].HeaderText = "Опис";
-                tasksGridView.Columns["Status"].HeaderText = "Статус";
-                tasksGridView.Columns["CreationDate"].HeaderText = "Дата створення";
-                tasksGridView.Columns["CompletionDate"].HeaderText = "Дата завершення";
-                tasksGridView.Columns["StudentID"].HeaderText = "ID учня";
-                tasksGridView.Columns["TeacherID"].HeaderText = "ID вчителя";
-                tasksGridView.Columns["Class"].HeaderText = "Клас";
-                tasksGridView.Columns["StudentGroup"].HeaderText = "Група";
             }
         }
 
+        private void LoadTasksDataForStudent()
+        {
+            using (var conn = DBUtils.GetDBConnection())
+            {
+                conn.Open();
+                string query = @"
+                    SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
+                           t.StudentID, t.TeacherID, s.Class, s.StudentGroup
+                    FROM Tasks t
+                    JOIN Students s ON t.StudentID = s.StudentID
+                    WHERE t.StudentID = @StudentID";
+
+                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
+                da.SelectCommand.Parameters.AddWithValue("@StudentID", userId);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                tasksGridView.DataSource = dt;
+            }
+        }
+
+        // Додавання, оновлення, видалення та фільтрація учнів
         private void addStudentButton_Click(object sender, EventArgs e)
         {
             using (var conn = DBUtils.GetDBConnection())
@@ -215,6 +306,7 @@ namespace SchoolManagementSystem
             }
         }
 
+        // Додавання, оновлення, видалення та фільтрація вчителів
         private void addTeacherButton_Click(object sender, EventArgs e)
         {
             using (var conn = DBUtils.GetDBConnection())
@@ -303,6 +395,7 @@ namespace SchoolManagementSystem
             }
         }
 
+        // Додавання, оновлення, видалення та фільтрація оцінок
         private void addGradeButton_Click(object sender, EventArgs e)
         {
             using (var conn = DBUtils.GetDBConnection())
@@ -310,7 +403,7 @@ namespace SchoolManagementSystem
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand("INSERT INTO Grades (StudentID, TeacherID, Grade, DateAssigned) VALUES (@StudentID, @TeacherID, @Grade, @DateAssigned)", conn);
                 cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
-                cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
+                cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
                 cmd.Parameters.AddWithValue("@Grade", gradeTextBox.Text);
                 cmd.Parameters.AddWithValue("@DateAssigned", dateAssignedPicker.Value.ToString("yyyy-MM-dd"));
                 cmd.ExecuteNonQuery();
@@ -328,7 +421,7 @@ namespace SchoolManagementSystem
                     MySqlCommand cmd = new MySqlCommand("UPDATE Grades SET StudentID=@StudentID, TeacherID=@TeacherID, Grade=@Grade, DateAssigned=@DateAssigned WHERE GradeID=@GradeID", conn);
                     cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
                     cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
-                    cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
+                    cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
                     cmd.Parameters.AddWithValue("@Grade", gradeTextBox.Text);
                     cmd.Parameters.AddWithValue("@DateAssigned", dateAssignedPicker.Value.ToString("yyyy-MM-dd"));
                     cmd.ExecuteNonQuery();
@@ -383,6 +476,7 @@ namespace SchoolManagementSystem
             }
         }
 
+        // Додавання, оновлення, видалення та фільтрація завдань
         private void addTaskButton_Click(object sender, EventArgs e)
         {
             using (var conn = DBUtils.GetDBConnection())
@@ -412,7 +506,7 @@ namespace SchoolManagementSystem
                     cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@StudentID", studentId);
-                    cmd.Parameters.AddWithValue("@TeacherID", teacherIdTaskTextBox.Text);
+                    cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -433,7 +527,7 @@ namespace SchoolManagementSystem
                     cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
                     cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@TeacherID", teacherIdTaskTextBox.Text);
+                    cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
                     cmd.ExecuteNonQuery();
                 }
                 LoadTasksData();
@@ -461,11 +555,11 @@ namespace SchoolManagementSystem
             {
                 conn.Open();
                 string query = @"
-            SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
-                   t.StudentID, t.TeacherID, s.Class, s.StudentGroup
-            FROM Tasks t
-            JOIN Students s ON t.StudentID = s.StudentID
-            WHERE s.Class = @Class AND s.StudentGroup = @StudentGroup";
+                    SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
+                           t.StudentID, t.TeacherID, s.Class, s.StudentGroup
+                    FROM Tasks t
+                    JOIN Students s ON t.StudentID = s.StudentID
+                    WHERE s.Class = @Class AND s.StudentGroup = @StudentGroup";
                 MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
 
                 string[] filterParts = filterTasksTextBox.Text.Split(new char[] { ' ' }, 2);
@@ -485,8 +579,6 @@ namespace SchoolManagementSystem
                 tasksGridView.DataSource = dt;
             }
         }
-
-
 
         private void tasksGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {

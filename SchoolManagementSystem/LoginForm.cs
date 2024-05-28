@@ -20,8 +20,16 @@ namespace SchoolManagementSystem
 
             if (AuthenticateUser(login, password))
             {
+                string role = GetUserRole(login);
+                if (string.IsNullOrEmpty(role))
+                {
+                    MessageBox.Show("Роль користувача не визначена.");
+                    return;
+                }
+
+                string userId = GetUserId(login, role);
                 this.Hide();
-                MainForm mainForm = new MainForm();
+                MainForm mainForm = new MainForm(role, login, userId);
                 mainForm.Show();
             }
             else
@@ -29,45 +37,55 @@ namespace SchoolManagementSystem
                 MessageBox.Show("Невірний логін або пароль.");
             }
         }
+        private string GetUserId(string login, string role)
+        {
+            using (var conn = DBUtils.GetDBConnection())
+            {
+                conn.Open();
+                string query = "";
+                if (role == "Teacher")
+                {
+                    query = "SELECT TeacherID FROM Teachers WHERE TeacherIdentifier = (SELECT TeacherIdentifier FROM Authorization WHERE Login = @login)";
+                }
+                else if (role == "Student")
+                {
+                    query = "SELECT StudentID FROM Students WHERE StudentIdentifier = (SELECT StudentIdentifier FROM Authorization WHERE Login = @login)";
+                }
+                else if (role == "Admin")
+                {
+                    return "Admin";
+                }
+                else
+                {
+                    throw new InvalidOperationException("Invalid role provided.");
+                }
+
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@login", login);
+                return cmd.ExecuteScalar()?.ToString();
+            }
+        }
 
         private bool AuthenticateUser(string login, string password)
         {
-            bool isAuthenticated = false;
-            string hashedPassword = ComputeSha256Hash(password);
-
-            MySqlConnection connection = DBUtils.GetDBConnection();
-
-            try
+            using (var conn = DBUtils.GetDBConnection())
             {
-                connection.Open();
-                string query = @"
-                    SELECT COUNT(1) 
-                    FROM Authorization 
-                    WHERE Login = @login 
-                      AND Password = @password";
-                MySqlCommand command = new MySqlCommand(query, connection);
-                command.Parameters.AddWithValue("@login", login);
-                command.Parameters.AddWithValue("@password", hashedPassword);
-
-                int count = Convert.ToInt32(command.ExecuteScalar());
-                isAuthenticated = count == 1;
-
-                // Відладочне повідомлення
-                if (!isAuthenticated)
-                {
-                    MessageBox.Show("Аутентифікація не вдалася. Перевірте логін та пароль.");
-                }
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT COUNT(1) FROM Authorization WHERE Login = @login AND Password = @password", conn);
+                cmd.Parameters.AddWithValue("@login", login);
+                cmd.Parameters.AddWithValue("@password", ComputeSha256Hash(password));
+                return Convert.ToInt32(cmd.ExecuteScalar()) == 1;
             }
-            catch (Exception ex)
+        }
+        private string GetUserRole(string login)
+        {
+            using (var conn = DBUtils.GetDBConnection())
             {
-                MessageBox.Show("Сталася помилка: " + ex.Message);
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT Role FROM Authorization WHERE Login = @login", conn);
+                cmd.Parameters.AddWithValue("@login", login);
+                return cmd.ExecuteScalar()?.ToString();
             }
-            finally
-            {
-                connection.Close();
-            }
-
-            return isAuthenticated;
         }
 
         private string ComputeSha256Hash(string rawData)
