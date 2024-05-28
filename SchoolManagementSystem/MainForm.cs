@@ -10,7 +10,7 @@ namespace SchoolManagementSystem
     {
         private string role;
         private string userLogin;
-        private string userId;
+        public string userId;
 
         public MainForm(string role, string userLogin, string userId)
         {
@@ -92,6 +92,10 @@ namespace SchoolManagementSystem
 
             studentIdTextBox.Text = userId; // Використання id учня
             studentIdTextBox.Enabled = false;
+
+            addTaskButton.Enabled = false;
+            deleteTaskButton.Enabled = false;
+            updateTaskButton.Enabled = false;
 
             // Заблокувати всі кнопки крім фільтрувати у формі Виставлення оцінок
             addGradeButton.Enabled = false;
@@ -643,5 +647,7 @@ namespace SchoolManagementSystem
                 return builder.ToString();
             }
         }
+
+        
     }
 }

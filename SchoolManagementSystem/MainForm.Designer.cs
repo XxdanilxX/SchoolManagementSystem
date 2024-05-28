@@ -175,6 +175,9 @@
             filterTasksButton = new Button();
             deleteTaskButton = new Button();
             updateTaskButton = new Button();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
             tabControl1.SuspendLayout();
             addStudentTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)studentsGridView).BeginInit();
@@ -556,6 +559,7 @@
             // 
             // addGradeTab
             // 
+            addGradeTab.Controls.Add(label1);
             addGradeTab.Controls.Add(studentIdLabel);
             addGradeTab.Controls.Add(teacherIdLabel);
             addGradeTab.Controls.Add(gradeLabel);
@@ -699,6 +703,8 @@
             // 
             // addTaskTab
             // 
+            addTaskTab.Controls.Add(label3);
+            addTaskTab.Controls.Add(label2);
             addTaskTab.Controls.Add(taskTypeLabel);
             addTaskTab.Controls.Add(descriptionLabel);
             addTaskTab.Controls.Add(statusLabel);
@@ -910,6 +916,34 @@
             updateTaskButton.Text = "Оновити";
             updateTaskButton.Click += updateTaskButton_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(584, 14);
+            label1.Name = "label1";
+            label1.Size = new Size(119, 20);
+            label1.TabIndex = 14;
+            label1.Text = "Додайте фільтр:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(574, 25);
+            label2.Name = "label2";
+            label2.Size = new Size(119, 20);
+            label2.TabIndex = 22;
+            label2.Text = "Додайте фільтр:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(3, 3);
+            label3.Name = "label3";
+            label3.Size = new Size(119, 20);
+            label3.TabIndex = 23;
+            label3.Text = "Додайте фільтр:";
+            label3.Click += label3_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -934,5 +968,9 @@
             ((System.ComponentModel.ISupportInitialize)tasksGridView).EndInit();
             ResumeLayout(false);
         }
+
+        private Label label1;
+        private Label label3;
+        private Label label2;
     }
 }
