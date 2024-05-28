@@ -95,9 +95,11 @@
         private System.Windows.Forms.Button filterTasksButton;
         private System.Windows.Forms.Button deleteTaskButton;
         private System.Windows.Forms.Button updateTaskButton;
-
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button changePasswordButton;
         private void InitializeComponent()
         {
+            changePasswordButton = new Button();
             tabControl1 = new TabControl();
             addStudentTab = new TabPage();
             filterStudentsLabel = new Label();
@@ -153,6 +155,7 @@
             deleteGradeButton = new Button();
             updateGradeButton = new Button();
             addTaskTab = new TabPage();
+            label3 = new Label();
             taskTypeLabel = new Label();
             descriptionLabel = new Label();
             statusLabel = new Label();
@@ -175,9 +178,6 @@
             filterTasksButton = new Button();
             deleteTaskButton = new Button();
             updateTaskButton = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
             tabControl1.SuspendLayout();
             addStudentTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)studentsGridView).BeginInit();
@@ -189,16 +189,26 @@
             ((System.ComponentModel.ISupportInitialize)tasksGridView).BeginInit();
             SuspendLayout();
             // 
+            // changePasswordButton
+            // 
+            changePasswordButton.Location = new Point(777, 12);
+            changePasswordButton.Name = "changePasswordButton";
+            changePasswordButton.Size = new Size(140, 30);
+            changePasswordButton.TabIndex = 1;
+            changePasswordButton.Text = "Змінити пароль";
+            changePasswordButton.UseVisualStyleBackColor = true;
+            changePasswordButton.Click += changePasswordButton_Click;
+            // 
             // tabControl1
             // 
             tabControl1.Controls.Add(addStudentTab);
             tabControl1.Controls.Add(addTeacherTab);
             tabControl1.Controls.Add(addGradeTab);
             tabControl1.Controls.Add(addTaskTab);
-            tabControl1.Location = new Point(12, 12);
+            tabControl1.Location = new Point(1, 24);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(860, 537);
+            tabControl1.Size = new Size(916, 539);
             tabControl1.TabIndex = 0;
             // 
             // addStudentTab
@@ -225,7 +235,7 @@
             addStudentTab.Location = new Point(4, 29);
             addStudentTab.Name = "addStudentTab";
             addStudentTab.Padding = new Padding(3);
-            addStudentTab.Size = new Size(852, 504);
+            addStudentTab.Size = new Size(908, 506);
             addStudentTab.TabIndex = 0;
             addStudentTab.Text = "Управління учнями";
             addStudentTab.UseVisualStyleBackColor = true;
@@ -381,10 +391,10 @@
             // studentsGridView
             // 
             studentsGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            studentsGridView.Location = new Point(8, 246);
+            studentsGridView.Location = new Point(3, 245);
             studentsGridView.Name = "studentsGridView";
             studentsGridView.RowHeadersWidth = 51;
-            studentsGridView.Size = new Size(837, 269);
+            studentsGridView.Size = new Size(897, 261);
             studentsGridView.TabIndex = 13;
             studentsGridView.CellDoubleClick += studentsGridView_CellDoubleClick;
             // 
@@ -410,7 +420,7 @@
             addTeacherTab.Location = new Point(4, 29);
             addTeacherTab.Name = "addTeacherTab";
             addTeacherTab.Padding = new Padding(3);
-            addTeacherTab.Size = new Size(852, 504);
+            addTeacherTab.Size = new Size(908, 506);
             addTeacherTab.TabIndex = 1;
             addTeacherTab.Text = "Управління вчителями";
             addTeacherTab.UseVisualStyleBackColor = true;
@@ -553,13 +563,12 @@
             teachersGridView.Location = new Point(8, 228);
             teachersGridView.Name = "teachersGridView";
             teachersGridView.RowHeadersWidth = 51;
-            teachersGridView.Size = new Size(829, 294);
+            teachersGridView.Size = new Size(892, 294);
             teachersGridView.TabIndex = 11;
             teachersGridView.CellDoubleClick += teachersGridView_CellDoubleClick;
             // 
             // addGradeTab
             // 
-            addGradeTab.Controls.Add(label1);
             addGradeTab.Controls.Add(studentIdLabel);
             addGradeTab.Controls.Add(teacherIdLabel);
             addGradeTab.Controls.Add(gradeLabel);
@@ -577,7 +586,7 @@
             addGradeTab.Location = new Point(4, 29);
             addGradeTab.Name = "addGradeTab";
             addGradeTab.Padding = new Padding(3);
-            addGradeTab.Size = new Size(852, 504);
+            addGradeTab.Size = new Size(908, 506);
             addGradeTab.TabIndex = 2;
             addGradeTab.Text = "Виставлення оцінки";
             addGradeTab.UseVisualStyleBackColor = true;
@@ -663,7 +672,7 @@
             gradesGridView.Location = new Point(3, 179);
             gradesGridView.Name = "gradesGridView";
             gradesGridView.RowHeadersWidth = 51;
-            gradesGridView.Size = new Size(835, 336);
+            gradesGridView.Size = new Size(897, 336);
             gradesGridView.TabIndex = 9;
             gradesGridView.CellDoubleClick += gradesGridView_CellDoubleClick;
             // 
@@ -703,8 +712,6 @@
             // 
             // addTaskTab
             // 
-            addTaskTab.Controls.Add(label3);
-            addTaskTab.Controls.Add(label2);
             addTaskTab.Controls.Add(taskTypeLabel);
             addTaskTab.Controls.Add(descriptionLabel);
             addTaskTab.Controls.Add(statusLabel);
@@ -730,10 +737,18 @@
             addTaskTab.Location = new Point(4, 29);
             addTaskTab.Name = "addTaskTab";
             addTaskTab.Padding = new Padding(3);
-            addTaskTab.Size = new Size(852, 504);
+            addTaskTab.Size = new Size(908, 506);
             addTaskTab.TabIndex = 3;
             addTaskTab.Text = "Завдання";
             addTaskTab.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 1);
+            label3.Name = "label3";
+            label3.Size = new Size(0, 20);
+            label3.TabIndex = 22;
             // 
             // taskTypeLabel
             // 
@@ -878,7 +893,7 @@
             tasksGridView.Location = new Point(3, 302);
             tasksGridView.Name = "tasksGridView";
             tasksGridView.RowHeadersWidth = 51;
-            tasksGridView.Size = new Size(840, 217);
+            tasksGridView.Size = new Size(897, 217);
             tasksGridView.TabIndex = 17;
             tasksGridView.CellDoubleClick += tasksGridView_CellDoubleClick;
             // 
@@ -916,43 +931,16 @@
             updateTaskButton.Text = "Оновити";
             updateTaskButton.Click += updateTaskButton_Click;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(584, 14);
-            label1.Name = "label1";
-            label1.Size = new Size(119, 20);
-            label1.TabIndex = 14;
-            label1.Text = "Додайте фільтр:";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(574, 25);
-            label2.Name = "label2";
-            label2.Size = new Size(119, 20);
-            label2.TabIndex = 22;
-            label2.Text = "Додайте фільтр:";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(3, 3);
-            label3.Name = "label3";
-            label3.Size = new Size(119, 20);
-            label3.TabIndex = 23;
-            label3.Text = "Додайте фільтр:";
-            label3.Click += label3_Click;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(884, 561);
+            ClientSize = new Size(917, 567);
+            Controls.Add(label3);
+            Controls.Add(changePasswordButton);
             Controls.Add(tabControl1);
             Name = "MainForm";
-            Text = "Система управління школою";
-            Load += MainForm_Load;
+            Text = "Шкільна система управління";
             tabControl1.ResumeLayout(false);
             addStudentTab.ResumeLayout(false);
             addStudentTab.PerformLayout();
@@ -967,10 +955,7 @@
             addTaskTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)tasksGridView).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
-
-        private Label label1;
-        private Label label3;
-        private Label label2;
     }
 }

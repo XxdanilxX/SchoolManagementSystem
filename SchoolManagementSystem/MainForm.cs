@@ -11,7 +11,7 @@ namespace SchoolManagementSystem
         private string role;
         private string userLogin;
         public string userId;
-
+        
         public MainForm(string role, string userLogin, string userId)
         {
             InitializeComponent();
@@ -25,6 +25,9 @@ namespace SchoolManagementSystem
         {
             ConfigureAccessBasedOnRole();
             LoadData();
+
+            // Встановити текст для label3
+            label3.Text = "Ваш ID: " + userId;
         }
 
         private void ConfigureAccessBasedOnRole()
@@ -113,7 +116,11 @@ namespace SchoolManagementSystem
             LoadGradesData();
             LoadTasksData();
         }
-
+        private void changePasswordButton_Click(object sender, EventArgs e)
+        {
+            ChangePasswordForm changePasswordForm = new ChangePasswordForm(userLogin);
+            changePasswordForm.ShowDialog();
+        }
         private void LoadStudentsData()
         {
             using (var conn = DBUtils.GetDBConnection())
@@ -182,6 +189,12 @@ namespace SchoolManagementSystem
 
         private void LoadTasksData()
         {
+            if (role == "Student")
+            {
+                LoadTasksDataForStudent();
+                return;
+            }
+
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
@@ -531,6 +544,7 @@ namespace SchoolManagementSystem
                     cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
                     cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@StudentID", tasksGridView.SelectedRows[0].Cells["StudentID"].Value);
                     cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
                     cmd.ExecuteNonQuery();
                 }
@@ -647,7 +661,5 @@ namespace SchoolManagementSystem
                 return builder.ToString();
             }
         }
-
-        
     }
 }
