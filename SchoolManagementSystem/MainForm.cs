@@ -69,7 +69,15 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                MySqlDataAdapter da = new MySqlDataAdapter("SELECT * FROM Grades", conn);
+                string query = @"
+            SELECT g.GradeID, g.StudentID, CONCAT(s.FirstName, ' ', s.LastName) AS StudentName, 
+                   s.Class AS StudentClass, s.StudentGroup, 
+                   CONCAT(t.FirstName, ' ', t.LastName) AS TeacherName, g.TeacherID, 
+                   g.Grade, g.DateAssigned
+            FROM Grades g
+            JOIN Students s ON g.StudentID = s.StudentID
+            JOIN Teachers t ON g.TeacherID = t.TeacherID";
+                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 gradesGridView.DataSource = dt;
@@ -77,6 +85,10 @@ namespace SchoolManagementSystem
                 // Налаштовуємо заголовки стовпців
                 gradesGridView.Columns["GradeID"].HeaderText = "ID";
                 gradesGridView.Columns["StudentID"].HeaderText = "ID учня";
+                gradesGridView.Columns["StudentName"].HeaderText = "Ім'я учня";
+                gradesGridView.Columns["StudentClass"].HeaderText = "Клас";
+                gradesGridView.Columns["StudentGroup"].HeaderText = "Група";
+                gradesGridView.Columns["TeacherName"].HeaderText = "Ім'я вчителя";
                 gradesGridView.Columns["TeacherID"].HeaderText = "ID вчителя";
                 gradesGridView.Columns["Grade"].HeaderText = "Оцінка";
                 gradesGridView.Columns["DateAssigned"].HeaderText = "Дата виставлення";
@@ -88,7 +100,12 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                MySqlDataAdapter da = new MySqlDataAdapter("SELECT * FROM Tasks", conn);
+                string query = @"
+                    SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
+                           t.StudentID, t.TeacherID, s.Class, s.StudentGroup
+                    FROM Tasks t
+                    JOIN Students s ON t.StudentID = s.StudentID";
+                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 tasksGridView.DataSource = dt;
@@ -102,6 +119,8 @@ namespace SchoolManagementSystem
                 tasksGridView.Columns["CompletionDate"].HeaderText = "Дата завершення";
                 tasksGridView.Columns["StudentID"].HeaderText = "ID учня";
                 tasksGridView.Columns["TeacherID"].HeaderText = "ID вчителя";
+                tasksGridView.Columns["Class"].HeaderText = "Клас";
+                tasksGridView.Columns["StudentGroup"].HeaderText = "Група";
             }
         }
 
@@ -110,15 +129,20 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                string query = "INSERT INTO Students (LastName, FirstName, BirthDate, Class, StudentGroup, StudentIdentifier) VALUES (@LastName, @FirstName, @BirthDate, @Class, @StudentGroup, @StudentIdentifier)";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO Students (LastName, FirstName, BirthDate, Class, StudentGroup, StudentIdentifier) VALUES (@LastName, @FirstName, @BirthDate, @Class, @StudentGroup, @StudentIdentifier)", conn);
                 cmd.Parameters.AddWithValue("@LastName", lastNameTextBox.Text);
                 cmd.Parameters.AddWithValue("@FirstName", firstNameTextBox.Text);
                 cmd.Parameters.AddWithValue("@BirthDate", birthDatePicker.Value.ToString("yyyy-MM-dd"));
                 cmd.Parameters.AddWithValue("@Class", classTextBox.Text);
                 cmd.Parameters.AddWithValue("@StudentGroup", groupTextBox.Text);
-                cmd.Parameters.AddWithValue("@StudentIdentifier", Guid.NewGuid().ToString());
+                cmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
                 cmd.ExecuteNonQuery();
+
+                MySqlCommand authCmd = new MySqlCommand("INSERT INTO Authorization (Login, Password, Role, StudentIdentifier) VALUES (@Login, @Password, 'Student', @StudentIdentifier)", conn);
+                authCmd.Parameters.AddWithValue("@Login", identifierTextBox.Text);
+                authCmd.Parameters.AddWithValue("@Password", ComputeSha256Hash("pass"));
+                authCmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
+                authCmd.ExecuteNonQuery();
             }
             LoadStudentsData();
         }
@@ -130,14 +154,14 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "UPDATE Students SET LastName=@LastName, FirstName=@FirstName, BirthDate=@BirthDate, Class=@Class, StudentGroup=@StudentGroup WHERE StudentID=@StudentID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("UPDATE Students SET LastName=@LastName, FirstName=@FirstName, BirthDate=@BirthDate, Class=@Class, StudentGroup=@StudentGroup, StudentIdentifier=@StudentIdentifier WHERE StudentID=@StudentID", conn);
                     cmd.Parameters.AddWithValue("@StudentID", studentsGridView.SelectedRows[0].Cells["StudentID"].Value);
                     cmd.Parameters.AddWithValue("@LastName", lastNameTextBox.Text);
                     cmd.Parameters.AddWithValue("@FirstName", firstNameTextBox.Text);
                     cmd.Parameters.AddWithValue("@BirthDate", birthDatePicker.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@Class", classTextBox.Text);
                     cmd.Parameters.AddWithValue("@StudentGroup", groupTextBox.Text);
+                    cmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
                     cmd.ExecuteNonQuery();
                 }
                 LoadStudentsData();
@@ -151,10 +175,13 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "DELETE FROM Students WHERE StudentID=@StudentID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Students WHERE StudentID=@StudentID", conn);
                     cmd.Parameters.AddWithValue("@StudentID", studentsGridView.SelectedRows[0].Cells["StudentID"].Value);
                     cmd.ExecuteNonQuery();
+
+                    MySqlCommand authCmd = new MySqlCommand("DELETE FROM Authorization WHERE StudentIdentifier=@StudentIdentifier", conn);
+                    authCmd.Parameters.AddWithValue("@StudentIdentifier", studentsGridView.SelectedRows[0].Cells["StudentIdentifier"].Value);
+                    authCmd.ExecuteNonQuery();
                 }
                 LoadStudentsData();
             }
@@ -184,6 +211,7 @@ namespace SchoolManagementSystem
                 birthDatePicker.Value = Convert.ToDateTime(row.Cells["BirthDate"].Value);
                 classTextBox.Text = row.Cells["Class"].Value.ToString();
                 groupTextBox.Text = row.Cells["StudentGroup"].Value.ToString();
+                identifierTextBox.Text = row.Cells["StudentIdentifier"].Value.ToString();
             }
         }
 
@@ -192,14 +220,19 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                string query = "INSERT INTO Teachers (LastName, FirstName, Subject, Qualification, TeacherIdentifier) VALUES (@LastName, @FirstName, @Subject, @Qualification, @TeacherIdentifier)";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO Teachers (LastName, FirstName, Subject, Qualification, TeacherIdentifier) VALUES (@LastName, @FirstName, @Subject, @Qualification, @TeacherIdentifier)", conn);
                 cmd.Parameters.AddWithValue("@LastName", lastNameTextBoxTeacher.Text);
                 cmd.Parameters.AddWithValue("@FirstName", firstNameTextBoxTeacher.Text);
                 cmd.Parameters.AddWithValue("@Subject", subjectTextBox.Text);
                 cmd.Parameters.AddWithValue("@Qualification", qualificationTextBox.Text);
-                cmd.Parameters.AddWithValue("@TeacherIdentifier", Guid.NewGuid().ToString());
+                cmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
                 cmd.ExecuteNonQuery();
+
+                MySqlCommand authCmd = new MySqlCommand("INSERT INTO Authorization (Login, Password, Role, TeacherIdentifier) VALUES (@Login, @Password, 'Teacher', @TeacherIdentifier)", conn);
+                authCmd.Parameters.AddWithValue("@Login", identifierTextBoxTeacher.Text);
+                authCmd.Parameters.AddWithValue("@Password", ComputeSha256Hash("pass"));
+                authCmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
+                authCmd.ExecuteNonQuery();
             }
             LoadTeachersData();
         }
@@ -211,13 +244,13 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "UPDATE Teachers SET LastName=@LastName, FirstName=@FirstName, Subject=@Subject, Qualification=@Qualification WHERE TeacherID=@TeacherID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("UPDATE Teachers SET LastName=@LastName, FirstName=@FirstName, Subject=@Subject, Qualification=@Qualification, TeacherIdentifier=@TeacherIdentifier WHERE TeacherID=@TeacherID", conn);
                     cmd.Parameters.AddWithValue("@TeacherID", teachersGridView.SelectedRows[0].Cells["TeacherID"].Value);
                     cmd.Parameters.AddWithValue("@LastName", lastNameTextBoxTeacher.Text);
                     cmd.Parameters.AddWithValue("@FirstName", firstNameTextBoxTeacher.Text);
                     cmd.Parameters.AddWithValue("@Subject", subjectTextBox.Text);
                     cmd.Parameters.AddWithValue("@Qualification", qualificationTextBox.Text);
+                    cmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
                     cmd.ExecuteNonQuery();
                 }
                 LoadTeachersData();
@@ -231,10 +264,13 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "DELETE FROM Teachers WHERE TeacherID=@TeacherID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Teachers WHERE TeacherID=@TeacherID", conn);
                     cmd.Parameters.AddWithValue("@TeacherID", teachersGridView.SelectedRows[0].Cells["TeacherID"].Value);
                     cmd.ExecuteNonQuery();
+
+                    MySqlCommand authCmd = new MySqlCommand("DELETE FROM Authorization WHERE TeacherIdentifier=@TeacherIdentifier", conn);
+                    authCmd.Parameters.AddWithValue("@TeacherIdentifier", teachersGridView.SelectedRows[0].Cells["TeacherIdentifier"].Value);
+                    authCmd.ExecuteNonQuery();
                 }
                 LoadTeachersData();
             }
@@ -263,6 +299,7 @@ namespace SchoolManagementSystem
                 firstNameTextBoxTeacher.Text = row.Cells["FirstName"].Value.ToString();
                 subjectTextBox.Text = row.Cells["Subject"].Value.ToString();
                 qualificationTextBox.Text = row.Cells["Qualification"].Value.ToString();
+                identifierTextBoxTeacher.Text = row.Cells["TeacherIdentifier"].Value.ToString();
             }
         }
 
@@ -271,8 +308,7 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                string query = "INSERT INTO Grades (StudentID, TeacherID, Grade, DateAssigned) VALUES (@StudentID, @TeacherID, @Grade, @DateAssigned)";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlCommand cmd = new MySqlCommand("INSERT INTO Grades (StudentID, TeacherID, Grade, DateAssigned) VALUES (@StudentID, @TeacherID, @Grade, @DateAssigned)", conn);
                 cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
                 cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
                 cmd.Parameters.AddWithValue("@Grade", gradeTextBox.Text);
@@ -289,8 +325,7 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "UPDATE Grades SET StudentID=@StudentID, TeacherID=@TeacherID, Grade=@Grade, DateAssigned=@DateAssigned WHERE GradeID=@GradeID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("UPDATE Grades SET StudentID=@StudentID, TeacherID=@TeacherID, Grade=@Grade, DateAssigned=@DateAssigned WHERE GradeID=@GradeID", conn);
                     cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
                     cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
                     cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
@@ -309,8 +344,7 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "DELETE FROM Grades WHERE GradeID=@GradeID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Grades WHERE GradeID=@GradeID", conn);
                     cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
                     cmd.ExecuteNonQuery();
                 }
@@ -341,6 +375,11 @@ namespace SchoolManagementSystem
                 teacherIdTextBox.Text = row.Cells["TeacherID"].Value.ToString();
                 gradeTextBox.Text = row.Cells["Grade"].Value.ToString();
                 dateAssignedPicker.Value = Convert.ToDateTime(row.Cells["DateAssigned"].Value);
+
+                studentNameTextBox.Text = row.Cells["StudentName"].Value.ToString();
+                studentClassTextBox.Text = row.Cells["StudentClass"].Value.ToString();
+                studentGroupTextBox.Text = row.Cells["StudentGroup"].Value.ToString();
+                teacherNameTextBox.Text = row.Cells["TeacherName"].Value.ToString();
             }
         }
 
@@ -349,16 +388,33 @@ namespace SchoolManagementSystem
             using (var conn = DBUtils.GetDBConnection())
             {
                 conn.Open();
-                string query = "INSERT INTO Tasks (TaskType, Description, Status, CreationDate, CompletionDate, StudentID, TeacherID) VALUES (@TaskType, @Description, @Status, @CreationDate, @CompletionDate, @StudentID, @TeacherID)";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
-                cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
-                cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
-                cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@StudentID", studentIdTaskTextBox.Text);
-                cmd.Parameters.AddWithValue("@TeacherID", teacherIdTaskTextBox.Text);
-                cmd.ExecuteNonQuery();
+
+                // Отримуємо список студентів за класом та групою
+                MySqlCommand getStudentsCmd = new MySqlCommand("SELECT StudentID FROM Students WHERE Class=@Class AND StudentGroup=@StudentGroup", conn);
+                getStudentsCmd.Parameters.AddWithValue("@Class", classTextBoxTask.Text);
+                getStudentsCmd.Parameters.AddWithValue("@StudentGroup", groupTextBoxTask.Text);
+
+                MySqlDataReader reader = getStudentsCmd.ExecuteReader();
+                var studentIds = new List<int>();
+                while (reader.Read())
+                {
+                    studentIds.Add(reader.GetInt32("StudentID"));
+                }
+                reader.Close();
+
+                // Додаємо завдання для кожного студента з цього списку
+                foreach (var studentId in studentIds)
+                {
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO Tasks (TaskType, Description, Status, CreationDate, CompletionDate, StudentID, TeacherID) VALUES (@TaskType, @Description, @Status, @CreationDate, @CompletionDate, @StudentID, @TeacherID)", conn);
+                    cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
+                    cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
+                    cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
+                    cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
+                    cmd.Parameters.AddWithValue("@StudentID", studentId);
+                    cmd.Parameters.AddWithValue("@TeacherID", teacherIdTaskTextBox.Text);
+                    cmd.ExecuteNonQuery();
+                }
             }
             LoadTasksData();
         }
@@ -370,15 +426,13 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "UPDATE Tasks SET TaskType=@TaskType, Description=@Description, Status=@Status, CreationDate=@CreationDate, CompletionDate=@CompletionDate, StudentID=@StudentID, TeacherID=@TeacherID WHERE TaskID=@TaskID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskType=@TaskType, Description=@Description, Status=@Status, CreationDate=@CreationDate, CompletionDate=@CompletionDate, StudentID=@StudentID, TeacherID=@TeacherID WHERE TaskID=@TaskID", conn);
                     cmd.Parameters.AddWithValue("@TaskID", tasksGridView.SelectedRows[0].Cells["TaskID"].Value);
                     cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
                     cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
                     cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
                     cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
                     cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@StudentID", studentIdTaskTextBox.Text);
                     cmd.Parameters.AddWithValue("@TeacherID", teacherIdTaskTextBox.Text);
                     cmd.ExecuteNonQuery();
                 }
@@ -393,8 +447,7 @@ namespace SchoolManagementSystem
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    string query = "DELETE FROM Tasks WHERE TaskID=@TaskID";
-                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Tasks WHERE TaskID=@TaskID", conn);
                     cmd.Parameters.AddWithValue("@TaskID", tasksGridView.SelectedRows[0].Cells["TaskID"].Value);
                     cmd.ExecuteNonQuery();
                 }
@@ -426,8 +479,57 @@ namespace SchoolManagementSystem
                 statusTextBox.Text = row.Cells["Status"].Value.ToString();
                 creationDatePicker.Value = Convert.ToDateTime(row.Cells["CreationDate"].Value);
                 completionDatePicker.Value = Convert.ToDateTime(row.Cells["CompletionDate"].Value);
-                studentIdTaskTextBox.Text = row.Cells["StudentID"].Value.ToString();
                 teacherIdTaskTextBox.Text = row.Cells["TeacherID"].Value.ToString();
+                classTextBoxTask.Text = row.Cells["Class"].Value.ToString();
+                groupTextBoxTask.Text = row.Cells["StudentGroup"].Value.ToString();
+            }
+        }
+
+        private void studentIdTextBox_Leave(object sender, EventArgs e)
+        {
+            using (var conn = DBUtils.GetDBConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT LastName, FirstName, Class, StudentGroup FROM Students WHERE StudentID = @StudentID", conn);
+                cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    studentNameTextBox.Text = reader["LastName"].ToString() + " " + reader["FirstName"].ToString();
+                    studentClassTextBox.Text = reader["Class"].ToString();
+                    studentGroupTextBox.Text = reader["StudentGroup"].ToString();
+                }
+                reader.Close();
+            }
+        }
+
+        private void teacherIdTextBox_Leave(object sender, EventArgs e)
+        {
+            using (var conn = DBUtils.GetDBConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT LastName, FirstName FROM Teachers WHERE TeacherID = @TeacherID", conn);
+                cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    teacherNameTextBox.Text = reader["LastName"].ToString() + " " + reader["FirstName"].ToString();
+                }
+                reader.Close();
+            }
+        }
+
+        private string ComputeSha256Hash(string rawData)
+        {
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(rawData));
+                var builder = new System.Text.StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
             }
         }
     }

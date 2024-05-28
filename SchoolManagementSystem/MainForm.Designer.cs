@@ -14,11 +14,13 @@
         private System.Windows.Forms.Label birthDateLabel;
         private System.Windows.Forms.Label classLabel;
         private System.Windows.Forms.Label groupLabel;
+        private System.Windows.Forms.Label identifierLabel;
         private System.Windows.Forms.TextBox lastNameTextBox;
         private System.Windows.Forms.TextBox firstNameTextBox;
         private System.Windows.Forms.DateTimePicker birthDatePicker;
         private System.Windows.Forms.TextBox classTextBox;
         private System.Windows.Forms.TextBox groupTextBox;
+        private System.Windows.Forms.TextBox identifierTextBox;
         private System.Windows.Forms.Button addStudentButton;
         private System.Windows.Forms.DataGridView studentsGridView;
         private System.Windows.Forms.Label filterStudentsLabel;
@@ -32,12 +34,12 @@
         private System.Windows.Forms.Label firstNameLabelTeacher;
         private System.Windows.Forms.Label subjectLabel;
         private System.Windows.Forms.Label qualificationLabel;
-        private System.Windows.Forms.Label scheduleLabel;
+        private System.Windows.Forms.Label identifierLabelTeacher;
         private System.Windows.Forms.TextBox lastNameTextBoxTeacher;
         private System.Windows.Forms.TextBox firstNameTextBoxTeacher;
         private System.Windows.Forms.TextBox subjectTextBox;
         private System.Windows.Forms.TextBox qualificationTextBox;
-        private System.Windows.Forms.TextBox scheduleTextBox;
+        private System.Windows.Forms.TextBox identifierTextBoxTeacher;
         private System.Windows.Forms.Button addTeacherButton;
         private System.Windows.Forms.DataGridView teachersGridView;
         private System.Windows.Forms.Label filterTeachersLabel;
@@ -47,11 +49,20 @@
         private System.Windows.Forms.Button updateTeacherButton;
 
         // Add Grade Controls
+
         private System.Windows.Forms.Label studentIdLabel;
+        private System.Windows.Forms.Label studentNameLabel;
+        private System.Windows.Forms.Label studentClassLabel;
+        private System.Windows.Forms.Label studentGroupLabel;
+        private System.Windows.Forms.Label teacherNameLabel;
         private System.Windows.Forms.Label teacherIdLabel;
         private System.Windows.Forms.Label gradeLabel;
         private System.Windows.Forms.Label dateAssignedLabel;
         private System.Windows.Forms.TextBox studentIdTextBox;
+        private System.Windows.Forms.TextBox studentNameTextBox;
+        private System.Windows.Forms.TextBox studentClassTextBox;
+        private System.Windows.Forms.TextBox studentGroupTextBox;
+        private System.Windows.Forms.TextBox teacherNameTextBox;
         private System.Windows.Forms.TextBox teacherIdTextBox;
         private System.Windows.Forms.TextBox gradeTextBox;
         private System.Windows.Forms.DateTimePicker dateAssignedPicker;
@@ -68,13 +79,15 @@
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.Label creationDateLabel;
         private System.Windows.Forms.Label completionDateLabel;
-        private System.Windows.Forms.Label studentIdTaskLabel;
         private System.Windows.Forms.Label teacherIdTaskLabel;
+        private System.Windows.Forms.Label classLabelTask;
+        private System.Windows.Forms.Label groupLabelTask;
         private System.Windows.Forms.TextBox taskTypeTextBox;
         private System.Windows.Forms.TextBox descriptionTextBox;
         private System.Windows.Forms.TextBox statusTextBox;
-        private System.Windows.Forms.TextBox studentIdTaskTextBox;
         private System.Windows.Forms.TextBox teacherIdTaskTextBox;
+        private System.Windows.Forms.TextBox classTextBoxTask;
+        private System.Windows.Forms.TextBox groupTextBoxTask;
         private System.Windows.Forms.DateTimePicker creationDatePicker;
         private System.Windows.Forms.DateTimePicker completionDatePicker;
         private System.Windows.Forms.Button addTaskButton;
@@ -86,6 +99,14 @@
 
         private void InitializeComponent()
         {
+            studentNameLabel = new Label(); // Новий лейбл для імені студента
+            studentClassLabel = new Label(); // Новий лейбл для класу студента
+            studentGroupLabel = new Label(); // Новий лейбл для групи студента
+            teacherNameLabel = new Label(); // Новий лейбл для імені вчителя
+            studentNameTextBox = new TextBox(); // Нове текстове поле для імені студента
+            studentClassTextBox = new TextBox(); // Нове текстове поле для класу студента
+            studentGroupTextBox = new TextBox(); // Нове текстове поле для групи студента
+            teacherNameTextBox = new TextBox(); // Нове текстове поле для імені вчителя
             tabControl1 = new TabControl();
             addStudentTab = new TabPage();
             filterStudentsLabel = new Label();
@@ -98,11 +119,13 @@
             birthDateLabel = new Label();
             classLabel = new Label();
             groupLabel = new Label();
+            identifierLabel = new Label();
             lastNameTextBox = new TextBox();
             firstNameTextBox = new TextBox();
             birthDatePicker = new DateTimePicker();
             classTextBox = new TextBox();
             groupTextBox = new TextBox();
+            identifierTextBox = new TextBox();
             addStudentButton = new Button();
             studentsGridView = new DataGridView();
             addTeacherTab = new TabPage();
@@ -115,21 +138,28 @@
             firstNameLabelTeacher = new Label();
             subjectLabel = new Label();
             qualificationLabel = new Label();
-            scheduleLabel = new Label();
+            identifierLabelTeacher = new Label();
             lastNameTextBoxTeacher = new TextBox();
             firstNameTextBoxTeacher = new TextBox();
             subjectTextBox = new TextBox();
             qualificationTextBox = new TextBox();
-            scheduleTextBox = new TextBox();
+            identifierTextBoxTeacher = new TextBox();
             addTeacherButton = new Button();
             teachersGridView = new DataGridView();
             addGradeTab = new TabPage();
-            label1 = new Label();
             studentIdLabel = new Label();
+            studentNameLabel = new Label();
+            studentClassLabel = new Label();
+            studentGroupLabel = new Label();
+            teacherNameLabel = new Label();
             teacherIdLabel = new Label();
             gradeLabel = new Label();
             dateAssignedLabel = new Label();
             studentIdTextBox = new TextBox();
+            studentNameTextBox = new TextBox();
+            studentClassTextBox = new TextBox();
+            studentGroupTextBox = new TextBox();
+            teacherNameTextBox = new TextBox();
             teacherIdTextBox = new TextBox();
             gradeTextBox = new TextBox();
             dateAssignedPicker = new DateTimePicker();
@@ -140,19 +170,20 @@
             deleteGradeButton = new Button();
             updateGradeButton = new Button();
             addTaskTab = new TabPage();
-            label2 = new Label();
             taskTypeLabel = new Label();
             descriptionLabel = new Label();
             statusLabel = new Label();
             creationDateLabel = new Label();
             completionDateLabel = new Label();
-            studentIdTaskLabel = new Label();
             teacherIdTaskLabel = new Label();
+            classLabelTask = new Label();
+            groupLabelTask = new Label();
             taskTypeTextBox = new TextBox();
             descriptionTextBox = new TextBox();
             statusTextBox = new TextBox();
-            studentIdTaskTextBox = new TextBox();
             teacherIdTaskTextBox = new TextBox();
+            classTextBoxTask = new TextBox();
+            groupTextBoxTask = new TextBox();
             creationDatePicker = new DateTimePicker();
             completionDatePicker = new DateTimePicker();
             addTaskButton = new Button();
@@ -196,11 +227,13 @@
             addStudentTab.Controls.Add(birthDateLabel);
             addStudentTab.Controls.Add(classLabel);
             addStudentTab.Controls.Add(groupLabel);
+            addStudentTab.Controls.Add(identifierLabel);
             addStudentTab.Controls.Add(lastNameTextBox);
             addStudentTab.Controls.Add(firstNameTextBox);
             addStudentTab.Controls.Add(birthDatePicker);
             addStudentTab.Controls.Add(classTextBox);
             addStudentTab.Controls.Add(groupTextBox);
+            addStudentTab.Controls.Add(identifierTextBox);
             addStudentTab.Controls.Add(addStudentButton);
             addStudentTab.Controls.Add(studentsGridView);
             addStudentTab.Location = new Point(4, 29);
@@ -211,6 +244,65 @@
             // 
             // filterStudentsLabel
             // 
+            // Налаштування для нових лейблів та текстових полів
+            studentNameLabel.Location = new Point(39, 66);
+            studentNameLabel.Name = "studentNameLabel";
+            studentNameLabel.Size = new Size(100, 23);
+            studentNameLabel.TabIndex = 14;
+            studentNameLabel.Text = "Ім'я учня:";
+
+            studentClassLabel.Location = new Point(39, 99);
+            studentClassLabel.Name = "studentClassLabel";
+            studentClassLabel.Size = new Size(100, 23);
+            studentClassLabel.TabIndex = 15;
+            studentClassLabel.Text = "Клас:";
+
+            studentGroupLabel.Location = new Point(39, 132);
+            studentGroupLabel.Name = "studentGroupLabel";
+            studentGroupLabel.Size = new Size(100, 23);
+            studentGroupLabel.TabIndex = 16;
+            studentGroupLabel.Text = "Група:";
+
+            teacherNameLabel.Location = new Point(39, 165);
+            teacherNameLabel.Name = "teacherNameLabel";
+            teacherNameLabel.Size = new Size(100, 23);
+            teacherNameLabel.TabIndex = 17;
+            teacherNameLabel.Text = "Ім'я вчителя:";
+
+            studentNameTextBox.Location = new Point(224, 62);
+            studentNameTextBox.Name = "studentNameTextBox";
+            studentNameTextBox.Size = new Size(195, 27);
+            studentNameTextBox.TabIndex = 18;
+            studentNameTextBox.ReadOnly = true;
+
+            studentClassTextBox.Location = new Point(224, 95);
+            studentClassTextBox.Name = "studentClassTextBox";
+            studentClassTextBox.Size = new Size(195, 27);
+            studentClassTextBox.TabIndex = 19;
+            studentClassTextBox.ReadOnly = true;
+
+            studentGroupTextBox.Location = new Point(224, 128);
+            studentGroupTextBox.Name = "studentGroupTextBox";
+            studentGroupTextBox.Size = new Size(195, 27);
+            studentGroupTextBox.TabIndex = 20;
+            studentGroupTextBox.ReadOnly = true;
+
+            teacherNameTextBox.Location = new Point(224, 161);
+            teacherNameTextBox.Name = "teacherNameTextBox";
+            teacherNameTextBox.Size = new Size(195, 27);
+            teacherNameTextBox.TabIndex = 21;
+            teacherNameTextBox.ReadOnly = true;
+
+            // Додавання контролів на форму
+            addGradeTab.Controls.Add(studentNameLabel);
+            addGradeTab.Controls.Add(studentClassLabel);
+            addGradeTab.Controls.Add(studentGroupLabel);
+            addGradeTab.Controls.Add(teacherNameLabel);
+            addGradeTab.Controls.Add(studentNameTextBox);
+            addGradeTab.Controls.Add(studentClassTextBox);
+            addGradeTab.Controls.Add(studentGroupTextBox);
+            addGradeTab.Controls.Add(teacherNameTextBox);
+
             filterStudentsLabel.Location = new Point(565, 35);
             filterStudentsLabel.Name = "filterStudentsLabel";
             filterStudentsLabel.Size = new Size(132, 23);
@@ -253,7 +345,7 @@
             // 
             // lastNameLabel
             // 
-            lastNameLabel.Location = new Point(38, 58);
+            lastNameLabel.Location = new Point(35, 35);
             lastNameLabel.Name = "lastNameLabel";
             lastNameLabel.Size = new Size(100, 23);
             lastNameLabel.TabIndex = 0;
@@ -261,7 +353,7 @@
             // 
             // firstNameLabel
             // 
-            firstNameLabel.Location = new Point(38, 95);
+            firstNameLabel.Location = new Point(35, 72);
             firstNameLabel.Name = "firstNameLabel";
             firstNameLabel.Size = new Size(100, 23);
             firstNameLabel.TabIndex = 1;
@@ -269,7 +361,7 @@
             // 
             // birthDateLabel
             // 
-            birthDateLabel.Location = new Point(38, 127);
+            birthDateLabel.Location = new Point(35, 104);
             birthDateLabel.Name = "birthDateLabel";
             birthDateLabel.Size = new Size(143, 24);
             birthDateLabel.TabIndex = 2;
@@ -277,7 +369,7 @@
             // 
             // classLabel
             // 
-            classLabel.Location = new Point(38, 164);
+            classLabel.Location = new Point(35, 141);
             classLabel.Name = "classLabel";
             classLabel.Size = new Size(100, 23);
             classLabel.TabIndex = 3;
@@ -285,46 +377,61 @@
             // 
             // groupLabel
             // 
-            groupLabel.Location = new Point(38, 201);
+            groupLabel.Location = new Point(35, 178);
             groupLabel.Name = "groupLabel";
             groupLabel.Size = new Size(100, 23);
             groupLabel.TabIndex = 4;
             groupLabel.Text = "Група:";
             // 
+            // identifierLabel
+            // 
+            identifierLabel.Location = new Point(35, 215);
+            identifierLabel.Name = "identifierLabel";
+            identifierLabel.Size = new Size(113, 23);
+            identifierLabel.TabIndex = 4;
+            identifierLabel.Text = "Ідентифікатор:";
+            // 
             // lastNameTextBox
             // 
-            lastNameTextBox.Location = new Point(218, 54);
+            lastNameTextBox.Location = new Point(215, 31);
             lastNameTextBox.Name = "lastNameTextBox";
             lastNameTextBox.Size = new Size(200, 27);
             lastNameTextBox.TabIndex = 5;
             // 
             // firstNameTextBox
             // 
-            firstNameTextBox.Location = new Point(218, 91);
+            firstNameTextBox.Location = new Point(215, 68);
             firstNameTextBox.Name = "firstNameTextBox";
             firstNameTextBox.Size = new Size(200, 27);
             firstNameTextBox.TabIndex = 6;
             // 
             // birthDatePicker
             // 
-            birthDatePicker.Location = new Point(218, 124);
+            birthDatePicker.Location = new Point(215, 101);
             birthDatePicker.Name = "birthDatePicker";
             birthDatePicker.Size = new Size(200, 27);
             birthDatePicker.TabIndex = 7;
             // 
             // classTextBox
             // 
-            classTextBox.Location = new Point(218, 160);
+            classTextBox.Location = new Point(215, 137);
             classTextBox.Name = "classTextBox";
             classTextBox.Size = new Size(200, 27);
             classTextBox.TabIndex = 8;
             // 
             // groupTextBox
             // 
-            groupTextBox.Location = new Point(218, 197);
+            groupTextBox.Location = new Point(215, 174);
             groupTextBox.Name = "groupTextBox";
             groupTextBox.Size = new Size(200, 27);
             groupTextBox.TabIndex = 9;
+            // 
+            // identifierTextBox
+            // 
+            identifierTextBox.Location = new Point(215, 212);
+            identifierTextBox.Name = "identifierTextBox";
+            identifierTextBox.Size = new Size(200, 27);
+            identifierTextBox.TabIndex = 9;
             // 
             // addStudentButton
             // 
@@ -356,12 +463,12 @@
             addTeacherTab.Controls.Add(firstNameLabelTeacher);
             addTeacherTab.Controls.Add(subjectLabel);
             addTeacherTab.Controls.Add(qualificationLabel);
-            addTeacherTab.Controls.Add(scheduleLabel);
+            addTeacherTab.Controls.Add(identifierLabelTeacher);
             addTeacherTab.Controls.Add(lastNameTextBoxTeacher);
             addTeacherTab.Controls.Add(firstNameTextBoxTeacher);
             addTeacherTab.Controls.Add(subjectTextBox);
             addTeacherTab.Controls.Add(qualificationTextBox);
-            addTeacherTab.Controls.Add(scheduleTextBox);
+            addTeacherTab.Controls.Add(identifierTextBoxTeacher);
             addTeacherTab.Controls.Add(addTeacherButton);
             addTeacherTab.Controls.Add(teachersGridView);
             addTeacherTab.Location = new Point(4, 29);
@@ -444,13 +551,13 @@
             qualificationLabel.TabIndex = 3;
             qualificationLabel.Text = "Кваліфікація:";
             // 
-            // scheduleLabel
+            // identifierLabelTeacher
             // 
-            scheduleLabel.Location = new Point(26, 177);
-            scheduleLabel.Name = "scheduleLabel";
-            scheduleLabel.Size = new Size(100, 23);
-            scheduleLabel.TabIndex = 4;
-            scheduleLabel.Text = "Графік роботи:";
+            identifierLabelTeacher.Location = new Point(26, 177);
+            identifierLabelTeacher.Name = "identifierLabelTeacher";
+            identifierLabelTeacher.Size = new Size(116, 23);
+            identifierLabelTeacher.TabIndex = 4;
+            identifierLabelTeacher.Text = "Ідентифікатор:";
             // 
             // lastNameTextBoxTeacher
             // 
@@ -480,12 +587,12 @@
             qualificationTextBox.Size = new Size(195, 27);
             qualificationTextBox.TabIndex = 8;
             // 
-            // scheduleTextBox
+            // identifierTextBoxTeacher
             // 
-            scheduleTextBox.Location = new Point(209, 173);
-            scheduleTextBox.Name = "scheduleTextBox";
-            scheduleTextBox.Size = new Size(195, 27);
-            scheduleTextBox.TabIndex = 9;
+            identifierTextBoxTeacher.Location = new Point(209, 173);
+            identifierTextBoxTeacher.Name = "identifierTextBoxTeacher";
+            identifierTextBoxTeacher.Size = new Size(195, 27);
+            identifierTextBoxTeacher.TabIndex = 9;
             // 
             // addTeacherButton
             // 
@@ -499,21 +606,28 @@
             // teachersGridView
             // 
             teachersGridView.ColumnHeadersHeight = 29;
-            teachersGridView.Location = new Point(8, 220);
+            teachersGridView.Location = new Point(8, 221);
             teachersGridView.Name = "teachersGridView";
             teachersGridView.RowHeadersWidth = 51;
-            teachersGridView.Size = new Size(829, 302);
+            teachersGridView.Size = new Size(829, 301);
             teachersGridView.TabIndex = 11;
             teachersGridView.CellDoubleClick += teachersGridView_CellDoubleClick;
             // 
             // addGradeTab
             // 
-            addGradeTab.Controls.Add(label1);
             addGradeTab.Controls.Add(studentIdLabel);
+            addGradeTab.Controls.Add(studentNameLabel);
+            addGradeTab.Controls.Add(studentClassLabel);
+            addGradeTab.Controls.Add(studentGroupLabel);
+            addGradeTab.Controls.Add(teacherNameLabel);
             addGradeTab.Controls.Add(teacherIdLabel);
             addGradeTab.Controls.Add(gradeLabel);
             addGradeTab.Controls.Add(dateAssignedLabel);
             addGradeTab.Controls.Add(studentIdTextBox);
+            addGradeTab.Controls.Add(studentNameTextBox);
+            addGradeTab.Controls.Add(studentClassTextBox);
+            addGradeTab.Controls.Add(studentGroupTextBox);
+            addGradeTab.Controls.Add(teacherNameTextBox);
             addGradeTab.Controls.Add(teacherIdTextBox);
             addGradeTab.Controls.Add(gradeTextBox);
             addGradeTab.Controls.Add(dateAssignedPicker);
@@ -529,15 +643,6 @@
             addGradeTab.TabIndex = 2;
             addGradeTab.Text = "Виставлення оцінки";
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(584, 14);
-            label1.Name = "label1";
-            label1.Size = new Size(119, 20);
-            label1.TabIndex = 14;
-            label1.Text = "Додайте фільтр:";
-            // 
             // studentIdLabel
             // 
             studentIdLabel.Location = new Point(39, 33);
@@ -546,9 +651,41 @@
             studentIdLabel.TabIndex = 0;
             studentIdLabel.Text = "ID учня:";
             // 
+            // studentNameLabel
+            // 
+            studentNameLabel.Location = new Point(39, 66);
+            studentNameLabel.Name = "studentNameLabel";
+            studentNameLabel.Size = new Size(100, 23);
+            studentNameLabel.TabIndex = 14;
+            studentNameLabel.Text = "Ім'я учня:";
+            // 
+            // studentClassLabel
+            // 
+            studentClassLabel.Location = new Point(39, 99);
+            studentClassLabel.Name = "studentClassLabel";
+            studentClassLabel.Size = new Size(100, 23);
+            studentClassLabel.TabIndex = 15;
+            studentClassLabel.Text = "Клас:";
+            // 
+            // studentGroupLabel
+            // 
+            studentGroupLabel.Location = new Point(39, 132);
+            studentGroupLabel.Name = "studentGroupLabel";
+            studentGroupLabel.Size = new Size(100, 23);
+            studentGroupLabel.TabIndex = 16;
+            studentGroupLabel.Text = "Група:";
+            // 
+            // teacherNameLabel
+            // 
+            teacherNameLabel.Location = new Point(39, 165);
+            teacherNameLabel.Name = "teacherNameLabel";
+            teacherNameLabel.Size = new Size(100, 23);
+            teacherNameLabel.TabIndex = 17;
+            teacherNameLabel.Text = "Ім'я вчителя:";
+            // 
             // teacherIdLabel
             // 
-            teacherIdLabel.Location = new Point(39, 66);
+            teacherIdLabel.Location = new Point(39, 198);
             teacherIdLabel.Name = "teacherIdLabel";
             teacherIdLabel.Size = new Size(100, 23);
             teacherIdLabel.TabIndex = 1;
@@ -556,7 +693,7 @@
             // 
             // gradeLabel
             // 
-            gradeLabel.Location = new Point(39, 99);
+            gradeLabel.Location = new Point(39, 231);
             gradeLabel.Name = "gradeLabel";
             gradeLabel.Size = new Size(100, 23);
             gradeLabel.TabIndex = 2;
@@ -564,9 +701,9 @@
             // 
             // dateAssignedLabel
             // 
-            dateAssignedLabel.Location = new Point(39, 132);
+            dateAssignedLabel.Location = new Point(39, 264);
             dateAssignedLabel.Name = "dateAssignedLabel";
-            dateAssignedLabel.Size = new Size(100, 23);
+            dateAssignedLabel.Size = new Size(135, 23);
             dateAssignedLabel.TabIndex = 3;
             dateAssignedLabel.Text = "Дата виставлення:";
             // 
@@ -576,24 +713,54 @@
             studentIdTextBox.Name = "studentIdTextBox";
             studentIdTextBox.Size = new Size(195, 27);
             studentIdTextBox.TabIndex = 4;
+            studentIdTextBox.Leave += studentIdTextBox_Leave;
+            // 
+            // studentNameTextBox
+            // 
+            studentNameTextBox.Location = new Point(224, 62);
+            studentNameTextBox.Name = "studentNameTextBox";
+            studentNameTextBox.Size = new Size(195, 27);
+            studentNameTextBox.TabIndex = 18;
+            // 
+            // studentClassTextBox
+            // 
+            studentClassTextBox.Location = new Point(224, 95);
+            studentClassTextBox.Name = "studentClassTextBox";
+            studentClassTextBox.Size = new Size(195, 27);
+            studentClassTextBox.TabIndex = 19;
+            // 
+            // studentGroupTextBox
+            // 
+            studentGroupTextBox.Location = new Point(224, 128);
+            studentGroupTextBox.Name = "studentGroupTextBox";
+            studentGroupTextBox.Size = new Size(195, 27);
+            studentGroupTextBox.TabIndex = 20;
+            // 
+            // teacherNameTextBox
+            // 
+            teacherNameTextBox.Location = new Point(224, 161);
+            teacherNameTextBox.Name = "teacherNameTextBox";
+            teacherNameTextBox.Size = new Size(195, 27);
+            teacherNameTextBox.TabIndex = 21;
             // 
             // teacherIdTextBox
             // 
-            teacherIdTextBox.Location = new Point(224, 62);
+            teacherIdTextBox.Location = new Point(224, 194);
             teacherIdTextBox.Name = "teacherIdTextBox";
             teacherIdTextBox.Size = new Size(195, 27);
             teacherIdTextBox.TabIndex = 5;
+            teacherIdTextBox.Leave += teacherIdTextBox_Leave;
             // 
             // gradeTextBox
             // 
-            gradeTextBox.Location = new Point(224, 95);
+            gradeTextBox.Location = new Point(224, 227);
             gradeTextBox.Name = "gradeTextBox";
             gradeTextBox.Size = new Size(195, 27);
             gradeTextBox.TabIndex = 6;
             // 
             // dateAssignedPicker
             // 
-            dateAssignedPicker.Location = new Point(224, 128);
+            dateAssignedPicker.Location = new Point(224, 260);
             dateAssignedPicker.Name = "dateAssignedPicker";
             dateAssignedPicker.Size = new Size(195, 27);
             dateAssignedPicker.TabIndex = 7;
@@ -610,10 +777,10 @@
             // gradesGridView
             // 
             gradesGridView.ColumnHeadersHeight = 29;
-            gradesGridView.Location = new Point(8, 195);
+            gradesGridView.Location = new Point(3, 309);
             gradesGridView.Name = "gradesGridView";
             gradesGridView.RowHeadersWidth = 51;
-            gradesGridView.Size = new Size(835, 303);
+            gradesGridView.Size = new Size(835, 206);
             gradesGridView.TabIndex = 9;
             gradesGridView.CellDoubleClick += gradesGridView_CellDoubleClick;
             // 
@@ -653,19 +820,20 @@
             // 
             // addTaskTab
             // 
-            addTaskTab.Controls.Add(label2);
             addTaskTab.Controls.Add(taskTypeLabel);
             addTaskTab.Controls.Add(descriptionLabel);
             addTaskTab.Controls.Add(statusLabel);
             addTaskTab.Controls.Add(creationDateLabel);
             addTaskTab.Controls.Add(completionDateLabel);
-            addTaskTab.Controls.Add(studentIdTaskLabel);
             addTaskTab.Controls.Add(teacherIdTaskLabel);
+            addTaskTab.Controls.Add(classLabelTask);
+            addTaskTab.Controls.Add(groupLabelTask);
             addTaskTab.Controls.Add(taskTypeTextBox);
             addTaskTab.Controls.Add(descriptionTextBox);
             addTaskTab.Controls.Add(statusTextBox);
-            addTaskTab.Controls.Add(studentIdTaskTextBox);
             addTaskTab.Controls.Add(teacherIdTaskTextBox);
+            addTaskTab.Controls.Add(classTextBoxTask);
+            addTaskTab.Controls.Add(groupTextBoxTask);
             addTaskTab.Controls.Add(creationDatePicker);
             addTaskTab.Controls.Add(completionDatePicker);
             addTaskTab.Controls.Add(addTaskButton);
@@ -679,15 +847,6 @@
             addTaskTab.Size = new Size(846, 522);
             addTaskTab.TabIndex = 3;
             addTaskTab.Text = "Завдання";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(574, 25);
-            label2.Name = "label2";
-            label2.Size = new Size(119, 20);
-            label2.TabIndex = 20;
-            label2.Text = "Додайте фільтр:";
             // 
             // taskTypeLabel
             // 
@@ -729,21 +888,29 @@
             completionDateLabel.TabIndex = 4;
             completionDateLabel.Text = "Дата завершення:";
             // 
-            // studentIdTaskLabel
-            // 
-            studentIdTaskLabel.Location = new Point(28, 207);
-            studentIdTaskLabel.Name = "studentIdTaskLabel";
-            studentIdTaskLabel.Size = new Size(100, 23);
-            studentIdTaskLabel.TabIndex = 5;
-            studentIdTaskLabel.Text = "ID учня: ";
-            // 
             // teacherIdTaskLabel
             // 
-            teacherIdTaskLabel.Location = new Point(28, 240);
+            teacherIdTaskLabel.Location = new Point(28, 207);
             teacherIdTaskLabel.Name = "teacherIdTaskLabel";
             teacherIdTaskLabel.Size = new Size(100, 23);
             teacherIdTaskLabel.TabIndex = 6;
             teacherIdTaskLabel.Text = "ID вчителя:";
+            // 
+            // classLabelTask
+            // 
+            classLabelTask.Location = new Point(28, 240);
+            classLabelTask.Name = "classLabelTask";
+            classLabelTask.Size = new Size(100, 23);
+            classLabelTask.TabIndex = 5;
+            classLabelTask.Text = "Клас:";
+            // 
+            // groupLabelTask
+            // 
+            groupLabelTask.Location = new Point(28, 273);
+            groupLabelTask.Name = "groupLabelTask";
+            groupLabelTask.Size = new Size(100, 23);
+            groupLabelTask.TabIndex = 6;
+            groupLabelTask.Text = "Група:";
             // 
             // taskTypeTextBox
             // 
@@ -766,19 +933,26 @@
             statusTextBox.Size = new Size(200, 27);
             statusTextBox.TabIndex = 9;
             // 
-            // studentIdTaskTextBox
-            // 
-            studentIdTaskTextBox.Location = new Point(209, 203);
-            studentIdTaskTextBox.Name = "studentIdTaskTextBox";
-            studentIdTaskTextBox.Size = new Size(200, 27);
-            studentIdTaskTextBox.TabIndex = 10;
-            // 
             // teacherIdTaskTextBox
             // 
-            teacherIdTaskTextBox.Location = new Point(209, 236);
+            teacherIdTaskTextBox.Location = new Point(209, 203);
             teacherIdTaskTextBox.Name = "teacherIdTaskTextBox";
             teacherIdTaskTextBox.Size = new Size(200, 27);
             teacherIdTaskTextBox.TabIndex = 11;
+            // 
+            // classTextBoxTask
+            // 
+            classTextBoxTask.Location = new Point(209, 236);
+            classTextBoxTask.Name = "classTextBoxTask";
+            classTextBoxTask.Size = new Size(200, 27);
+            classTextBoxTask.TabIndex = 10;
+            // 
+            // groupTextBoxTask
+            // 
+            groupTextBoxTask.Location = new Point(209, 269);
+            groupTextBoxTask.Name = "groupTextBoxTask";
+            groupTextBoxTask.Size = new Size(200, 27);
+            groupTextBoxTask.TabIndex = 11;
             // 
             // creationDatePicker
             // 
@@ -806,10 +980,10 @@
             // tasksGridView
             // 
             tasksGridView.ColumnHeadersHeight = 29;
-            tasksGridView.Location = new Point(3, 269);
+            tasksGridView.Location = new Point(3, 302);
             tasksGridView.Name = "tasksGridView";
             tasksGridView.RowHeadersWidth = 51;
-            tasksGridView.Size = new Size(835, 250);
+            tasksGridView.Size = new Size(840, 217);
             tasksGridView.TabIndex = 15;
             tasksGridView.CellDoubleClick += tasksGridView_CellDoubleClick;
             // 
@@ -826,7 +1000,7 @@
             filterTasksButton.Name = "filterTasksButton";
             filterTasksButton.Size = new Size(117, 47);
             filterTasksButton.TabIndex = 17;
-            filterTasksButton.Text = "Фільтррувати";
+            filterTasksButton.Text = "Фільтрувати";
             filterTasksButton.Click += filterTasksButton_Click;
             // 
             // deleteTaskButton
@@ -868,8 +1042,5 @@
             ((System.ComponentModel.ISupportInitialize)tasksGridView).EndInit();
             ResumeLayout(false);
         }
-
-        private Label label1;
-        private Label label2;
     }
 }
