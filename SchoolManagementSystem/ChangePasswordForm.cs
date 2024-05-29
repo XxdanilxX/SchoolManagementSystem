@@ -16,23 +16,30 @@ namespace SchoolManagementSystem
 
         private void changePasswordButton_Click(object sender, EventArgs e)
         {
-            if (newPasswordTextBox.Text == confirmNewPasswordTextBox.Text)
+            try
             {
-                using (var conn = DBUtils.GetDBConnection())
+                if (newPasswordTextBox.Text == confirmNewPasswordTextBox.Text)
                 {
-                    conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("UPDATE Authorization SET Password=@Password WHERE Login=@UserLogin", conn);
-                    cmd.Parameters.AddWithValue("@Password", ComputeSha256Hash(newPasswordTextBox.Text));
-                    cmd.Parameters.AddWithValue("@UserLogin", userLogin);
-                    cmd.ExecuteNonQuery();
-                }
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("UPDATE Authorization SET Password=@Password WHERE Login=@UserLogin", conn);
+                        cmd.Parameters.AddWithValue("@Password", ComputeSha256Hash(newPasswordTextBox.Text));
+                        cmd.Parameters.AddWithValue("@UserLogin", userLogin);
+                        cmd.ExecuteNonQuery();
+                    }
 
-                MessageBox.Show("Пароль успішно змінено.");
-                this.Close();
+                    MessageBox.Show("Пароль успішно змінено.");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Паролі не співпадають. Будь ласка, спробуйте ще раз.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Паролі не співпадають. Будь ласка, спробуйте ще раз.");
+                MessageBox.Show("Сталася помилка при зміні паролю: " + ex.Message);
             }
         }
 

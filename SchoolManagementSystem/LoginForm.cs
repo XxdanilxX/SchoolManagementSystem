@@ -15,26 +15,33 @@ namespace SchoolManagementSystem
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            string login = loginTextBox.Text;
-            string password = passwordTextBox.Text;
-
-            if (AuthenticateUser(login, password))
+            try
             {
-                string role = GetUserRole(login);
-                if (string.IsNullOrEmpty(role))
+                string login = loginTextBox.Text;
+                string password = passwordTextBox.Text;
+
+                if (AuthenticateUser(login, password))
                 {
-                    MessageBox.Show("Роль користувача не визначена.");
-                    return;
-                }
+                    string role = GetUserRole(login);
+                    if (string.IsNullOrEmpty(role))
+                    {
+                        MessageBox.Show("Роль користувача не визначена.");
+                        return;
+                    }
 
-                string userId = GetUserId(login, role);
-                this.Hide();
-                MainForm mainForm = new MainForm(role, login, userId);
-                mainForm.Show();
+                    string userId = GetUserId(login, role);
+                    this.Hide();
+                    MainForm mainForm = new MainForm(role, login, userId);
+                    mainForm.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Невірний логін або пароль.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Невірний логін або пароль.");
+                MessageBox.Show("Сталася помилка при вході: " + ex.Message);
             }
         }
         private string GetUserId(string login, string role)
@@ -104,7 +111,14 @@ namespace SchoolManagementSystem
 
         private void exitButton_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            try
+            {
+                Application.Exit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при виході: " + ex.Message);
+            }
         }
     }
 }

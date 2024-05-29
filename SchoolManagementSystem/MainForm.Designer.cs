@@ -102,6 +102,7 @@
             changePasswordButton = new Button();
             tabControl1 = new TabControl();
             addStudentTab = new TabPage();
+            label4 = new Label();
             filterStudentsLabel = new Label();
             filterStudentsTextBox = new TextBox();
             filterStudentsButton = new Button();
@@ -122,6 +123,7 @@
             addStudentButton = new Button();
             studentsGridView = new DataGridView();
             addTeacherTab = new TabPage();
+            label5 = new Label();
             filterTeachersLabel = new Label();
             filterTeachersTextBox = new TextBox();
             filterTeachersButton = new Button();
@@ -140,6 +142,8 @@
             addTeacherButton = new Button();
             teachersGridView = new DataGridView();
             addGradeTab = new TabPage();
+            label6 = new Label();
+            label1 = new Label();
             studentIdLabel = new Label();
             teacherIdLabel = new Label();
             gradeLabel = new Label();
@@ -155,7 +159,8 @@
             deleteGradeButton = new Button();
             updateGradeButton = new Button();
             addTaskTab = new TabPage();
-            label3 = new Label();
+            label7 = new Label();
+            label2 = new Label();
             taskTypeLabel = new Label();
             descriptionLabel = new Label();
             statusLabel = new Label();
@@ -178,6 +183,7 @@
             filterTasksButton = new Button();
             deleteTaskButton = new Button();
             updateTaskButton = new Button();
+            label3 = new Label();
             tabControl1.SuspendLayout();
             addStudentTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)studentsGridView).BeginInit();
@@ -213,6 +219,7 @@
             // 
             // addStudentTab
             // 
+            addStudentTab.Controls.Add(label4);
             addStudentTab.Controls.Add(filterStudentsLabel);
             addStudentTab.Controls.Add(filterStudentsTextBox);
             addStudentTab.Controls.Add(filterStudentsButton);
@@ -239,6 +246,14 @@
             addStudentTab.TabIndex = 0;
             addStudentTab.Text = "Управління учнями";
             addStudentTab.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            label4.Location = new Point(443, 149);
+            label4.Name = "label4";
+            label4.Size = new Size(345, 73);
+            label4.TabIndex = 14;
+            label4.Text = "Ви можете ввести номер класу або групу учнів. Наприклад, \"10\" або \"А\"";
             // 
             // filterStudentsLabel
             // 
@@ -400,6 +415,7 @@
             // 
             // addTeacherTab
             // 
+            addTeacherTab.Controls.Add(label5);
             addTeacherTab.Controls.Add(filterTeachersLabel);
             addTeacherTab.Controls.Add(filterTeachersTextBox);
             addTeacherTab.Controls.Add(filterTeachersButton);
@@ -424,6 +440,15 @@
             addTeacherTab.TabIndex = 1;
             addTeacherTab.Text = "Управління вчителями";
             addTeacherTab.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(431, 148);
+            label5.Name = "label5";
+            label5.Size = new Size(326, 20);
+            label5.TabIndex = 12;
+            label5.Text = "Ви можете ввести прізвище або ім’я вчителя.";
             // 
             // filterTeachersLabel
             // 
@@ -569,6 +594,8 @@
             // 
             // addGradeTab
             // 
+            addGradeTab.Controls.Add(label6);
+            addGradeTab.Controls.Add(label1);
             addGradeTab.Controls.Add(studentIdLabel);
             addGradeTab.Controls.Add(teacherIdLabel);
             addGradeTab.Controls.Add(gradeLabel);
@@ -590,6 +617,24 @@
             addGradeTab.TabIndex = 2;
             addGradeTab.Text = "Виставлення оцінки";
             addGradeTab.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(455, 125);
+            label6.Name = "label6";
+            label6.Size = new Size(300, 20);
+            label6.TabIndex = 15;
+            label6.Text = "Ви можете ввести ID учня або ID вчителя.";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(584, 14);
+            label1.Name = "label1";
+            label1.Size = new Size(119, 20);
+            label1.TabIndex = 14;
+            label1.Text = "Додайте фільтр:";
             // 
             // studentIdLabel
             // 
@@ -712,6 +757,8 @@
             // 
             // addTaskTab
             // 
+            addTaskTab.Controls.Add(label7);
+            addTaskTab.Controls.Add(label2);
             addTaskTab.Controls.Add(taskTypeLabel);
             addTaskTab.Controls.Add(descriptionLabel);
             addTaskTab.Controls.Add(statusLabel);
@@ -742,13 +789,22 @@
             addTaskTab.Text = "Завдання";
             addTaskTab.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // label7
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(12, 1);
-            label3.Name = "label3";
-            label3.Size = new Size(0, 20);
-            label3.TabIndex = 22;
+            label7.Location = new Point(449, 148);
+            label7.Name = "label7";
+            label7.Size = new Size(365, 60);
+            label7.TabIndex = 23;
+            label7.Text = "Введіть клас та групу у форматі \"10 A\". Переконайтеся, що між класом і групою є пробіл.";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(574, 25);
+            label2.Name = "label2";
+            label2.Size = new Size(119, 20);
+            label2.TabIndex = 22;
+            label2.Text = "Додайте фільтр:";
             // 
             // taskTypeLabel
             // 
@@ -880,7 +936,7 @@
             // 
             // addTaskButton
             // 
-            addTaskButton.Location = new Point(451, 112);
+            addTaskButton.Location = new Point(451, 92);
             addTaskButton.Name = "addTaskButton";
             addTaskButton.Size = new Size(117, 53);
             addTaskButton.TabIndex = 16;
@@ -915,7 +971,7 @@
             // 
             // deleteTaskButton
             // 
-            deleteTaskButton.Location = new Point(574, 112);
+            deleteTaskButton.Location = new Point(574, 92);
             deleteTaskButton.Name = "deleteTaskButton";
             deleteTaskButton.Size = new Size(117, 53);
             deleteTaskButton.TabIndex = 20;
@@ -924,12 +980,20 @@
             // 
             // updateTaskButton
             // 
-            updateTaskButton.Location = new Point(697, 112);
+            updateTaskButton.Location = new Point(697, 92);
             updateTaskButton.Name = "updateTaskButton";
             updateTaskButton.Size = new Size(117, 53);
             updateTaskButton.TabIndex = 21;
             updateTaskButton.Text = "Оновити";
             updateTaskButton.Click += updateTaskButton_Click;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 1);
+            label3.Name = "label3";
+            label3.Size = new Size(0, 20);
+            label3.TabIndex = 22;
             // 
             // MainForm
             // 
@@ -939,7 +1003,10 @@
             Controls.Add(label3);
             Controls.Add(changePasswordButton);
             Controls.Add(tabControl1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "MainForm";
+            SizeGripStyle = SizeGripStyle.Hide;
             Text = "Шкільна система управління";
             tabControl1.ResumeLayout(false);
             addStudentTab.ResumeLayout(false);
@@ -957,5 +1024,12 @@
             ResumeLayout(false);
             PerformLayout();
         }
+
+        private Label label1;
+        private Label label2;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private Label label7;
     }
 }

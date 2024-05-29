@@ -26,7 +26,6 @@ namespace SchoolManagementSystem
             ConfigureAccessBasedOnRole();
             LoadData();
 
-            // Встановити текст для label3
             label3.Text = "Ваш ID: " + userId;
         }
 
@@ -234,36 +233,12 @@ namespace SchoolManagementSystem
         // Додавання, оновлення, видалення та фільтрація учнів
         private void addStudentButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
-            {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Students (LastName, FirstName, BirthDate, Class, StudentGroup, StudentIdentifier) VALUES (@LastName, @FirstName, @BirthDate, @Class, @StudentGroup, @StudentIdentifier)", conn);
-                cmd.Parameters.AddWithValue("@LastName", lastNameTextBox.Text);
-                cmd.Parameters.AddWithValue("@FirstName", firstNameTextBox.Text);
-                cmd.Parameters.AddWithValue("@BirthDate", birthDatePicker.Value.ToString("yyyy-MM-dd"));
-                cmd.Parameters.AddWithValue("@Class", classTextBox.Text);
-                cmd.Parameters.AddWithValue("@StudentGroup", groupTextBox.Text);
-                cmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
-                cmd.ExecuteNonQuery();
-
-                MySqlCommand authCmd = new MySqlCommand("INSERT INTO Authorization (Login, Password, Role, StudentIdentifier) VALUES (@Login, @Password, 'Student', @StudentIdentifier)", conn);
-                authCmd.Parameters.AddWithValue("@Login", identifierTextBox.Text);
-                authCmd.Parameters.AddWithValue("@Password", ComputeSha256Hash("pass"));
-                authCmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
-                authCmd.ExecuteNonQuery();
-            }
-            LoadStudentsData();
-        }
-
-        private void updateStudentButton_Click(object sender, EventArgs e)
-        {
-            if (studentsGridView.SelectedRows.Count > 0)
+            try
             {
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("UPDATE Students SET LastName=@LastName, FirstName=@FirstName, BirthDate=@BirthDate, Class=@Class, StudentGroup=@StudentGroup, StudentIdentifier=@StudentIdentifier WHERE StudentID=@StudentID", conn);
-                    cmd.Parameters.AddWithValue("@StudentID", studentsGridView.SelectedRows[0].Cells["StudentID"].Value);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO Students (LastName, FirstName, BirthDate, Class, StudentGroup, StudentIdentifier) VALUES (@LastName, @FirstName, @BirthDate, @Class, @StudentGroup, @StudentIdentifier)", conn);
                     cmd.Parameters.AddWithValue("@LastName", lastNameTextBox.Text);
                     cmd.Parameters.AddWithValue("@FirstName", firstNameTextBox.Text);
                     cmd.Parameters.AddWithValue("@BirthDate", birthDatePicker.Value.ToString("yyyy-MM-dd"));
@@ -271,41 +246,93 @@ namespace SchoolManagementSystem
                     cmd.Parameters.AddWithValue("@StudentGroup", groupTextBox.Text);
                     cmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
                     cmd.ExecuteNonQuery();
+
+                    MySqlCommand authCmd = new MySqlCommand("INSERT INTO Authorization (Login, Password, Role, StudentIdentifier) VALUES (@Login, @Password, 'Student', @StudentIdentifier)", conn);
+                    authCmd.Parameters.AddWithValue("@Login", identifierTextBox.Text);
+                    authCmd.Parameters.AddWithValue("@Password", ComputeSha256Hash("pass"));
+                    authCmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
+                    authCmd.ExecuteNonQuery();
                 }
                 LoadStudentsData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при додаванні учня: " + ex.Message);
+            }
+        }
+
+        private void updateStudentButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (studentsGridView.SelectedRows.Count > 0)
+                {
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("UPDATE Students SET LastName=@LastName, FirstName=@FirstName, BirthDate=@BirthDate, Class=@Class, StudentGroup=@StudentGroup, StudentIdentifier=@StudentIdentifier WHERE StudentID=@StudentID", conn);
+                        cmd.Parameters.AddWithValue("@StudentID", studentsGridView.SelectedRows[0].Cells["StudentID"].Value);
+                        cmd.Parameters.AddWithValue("@LastName", lastNameTextBox.Text);
+                        cmd.Parameters.AddWithValue("@FirstName", firstNameTextBox.Text);
+                        cmd.Parameters.AddWithValue("@BirthDate", birthDatePicker.Value.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@Class", classTextBox.Text);
+                        cmd.Parameters.AddWithValue("@StudentGroup", groupTextBox.Text);
+                        cmd.Parameters.AddWithValue("@StudentIdentifier", identifierTextBox.Text);
+                        cmd.ExecuteNonQuery();
+                    }
+                    LoadStudentsData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при оновленні учня: " + ex.Message);
             }
         }
 
         private void deleteStudentButton_Click(object sender, EventArgs e)
         {
-            if (studentsGridView.SelectedRows.Count > 0)
+            try
             {
-                using (var conn = DBUtils.GetDBConnection())
+                if (studentsGridView.SelectedRows.Count > 0)
                 {
-                    conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Students WHERE StudentID=@StudentID", conn);
-                    cmd.Parameters.AddWithValue("@StudentID", studentsGridView.SelectedRows[0].Cells["StudentID"].Value);
-                    cmd.ExecuteNonQuery();
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("DELETE FROM Students WHERE StudentID=@StudentID", conn);
+                        cmd.Parameters.AddWithValue("@StudentID", studentsGridView.SelectedRows[0].Cells["StudentID"].Value);
+                        cmd.ExecuteNonQuery();
 
-                    MySqlCommand authCmd = new MySqlCommand("DELETE FROM Authorization WHERE StudentIdentifier=@StudentIdentifier", conn);
-                    authCmd.Parameters.AddWithValue("@StudentIdentifier", studentsGridView.SelectedRows[0].Cells["StudentIdentifier"].Value);
-                    authCmd.ExecuteNonQuery();
+                        MySqlCommand authCmd = new MySqlCommand("DELETE FROM Authorization WHERE StudentIdentifier=@StudentIdentifier", conn);
+                        authCmd.Parameters.AddWithValue("@StudentIdentifier", studentsGridView.SelectedRows[0].Cells["StudentIdentifier"].Value);
+                        authCmd.ExecuteNonQuery();
+                    }
+                    LoadStudentsData();
                 }
-                LoadStudentsData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при видаленні учня: " + ex.Message);
             }
         }
 
         private void filterStudentsButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
+            try
             {
-                conn.Open();
-                string query = "SELECT * FROM Students WHERE StudentGroup = @StudentGroup OR Class = @StudentGroup";
-                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
-                da.SelectCommand.Parameters.AddWithValue("@StudentGroup", filterStudentsTextBox.Text);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                studentsGridView.DataSource = dt;
+                using (var conn = DBUtils.GetDBConnection())
+                {
+                    conn.Open();
+                    string query = "SELECT * FROM Students WHERE StudentGroup = @StudentGroup OR Class = @StudentGroup";
+                    MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
+                    da.SelectCommand.Parameters.AddWithValue("@StudentGroup", filterStudentsTextBox.Text);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    studentsGridView.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при фільтрації учнів: " + ex.Message);
             }
         }
 
@@ -326,78 +353,107 @@ namespace SchoolManagementSystem
         // Додавання, оновлення, видалення та фільтрація вчителів
         private void addTeacherButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
-            {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Teachers (LastName, FirstName, Subject, Qualification, TeacherIdentifier) VALUES (@LastName, @FirstName, @Subject, @Qualification, @TeacherIdentifier)", conn);
-                cmd.Parameters.AddWithValue("@LastName", lastNameTextBoxTeacher.Text);
-                cmd.Parameters.AddWithValue("@FirstName", firstNameTextBoxTeacher.Text);
-                cmd.Parameters.AddWithValue("@Subject", subjectTextBox.Text);
-                cmd.Parameters.AddWithValue("@Qualification", qualificationTextBox.Text);
-                cmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
-                cmd.ExecuteNonQuery();
-
-                MySqlCommand authCmd = new MySqlCommand("INSERT INTO Authorization (Login, Password, Role, TeacherIdentifier) VALUES (@Login, @Password, 'Teacher', @TeacherIdentifier)", conn);
-                authCmd.Parameters.AddWithValue("@Login", identifierTextBoxTeacher.Text);
-                authCmd.Parameters.AddWithValue("@Password", ComputeSha256Hash("pass"));
-                authCmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
-                authCmd.ExecuteNonQuery();
-            }
-            LoadTeachersData();
-        }
-
-        private void updateTeacherButton_Click(object sender, EventArgs e)
-        {
-            if (teachersGridView.SelectedRows.Count > 0)
+            try
             {
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("UPDATE Teachers SET LastName=@LastName, FirstName=@FirstName, Subject=@Subject, Qualification=@Qualification, TeacherIdentifier=@TeacherIdentifier WHERE TeacherID=@TeacherID", conn);
-                    cmd.Parameters.AddWithValue("@TeacherID", teachersGridView.SelectedRows[0].Cells["TeacherID"].Value);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO Teachers (LastName, FirstName, Subject, Qualification, TeacherIdentifier) VALUES (@LastName, @FirstName, @Subject, @Qualification, @TeacherIdentifier)", conn);
                     cmd.Parameters.AddWithValue("@LastName", lastNameTextBoxTeacher.Text);
                     cmd.Parameters.AddWithValue("@FirstName", firstNameTextBoxTeacher.Text);
                     cmd.Parameters.AddWithValue("@Subject", subjectTextBox.Text);
                     cmd.Parameters.AddWithValue("@Qualification", qualificationTextBox.Text);
                     cmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
                     cmd.ExecuteNonQuery();
+
+                    MySqlCommand authCmd = new MySqlCommand("INSERT INTO Authorization (Login, Password, Role, TeacherIdentifier) VALUES (@Login, @Password, 'Teacher', @TeacherIdentifier)", conn);
+                    authCmd.Parameters.AddWithValue("@Login", identifierTextBoxTeacher.Text);
+                    authCmd.Parameters.AddWithValue("@Password", ComputeSha256Hash("pass"));
+                    authCmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
+                    authCmd.ExecuteNonQuery();
                 }
                 LoadTeachersData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при додаванні вчителя: " + ex.Message);
+            }
+        }
+
+        private void updateTeacherButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (teachersGridView.SelectedRows.Count > 0)
+                {
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("UPDATE Teachers SET LastName=@LastName, FirstName=@FirstName, Subject=@Subject, Qualification=@Qualification, TeacherIdentifier=@TeacherIdentifier WHERE TeacherID=@TeacherID", conn);
+                        cmd.Parameters.AddWithValue("@TeacherID", teachersGridView.SelectedRows[0].Cells["TeacherID"].Value);
+                        cmd.Parameters.AddWithValue("@LastName", lastNameTextBoxTeacher.Text);
+                        cmd.Parameters.AddWithValue("@FirstName", firstNameTextBoxTeacher.Text);
+                        cmd.Parameters.AddWithValue("@Subject", subjectTextBox.Text);
+                        cmd.Parameters.AddWithValue("@Qualification", qualificationTextBox.Text);
+                        cmd.Parameters.AddWithValue("@TeacherIdentifier", identifierTextBoxTeacher.Text);
+                        cmd.ExecuteNonQuery();
+                    }
+                    LoadTeachersData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при оновленні вчителя: " + ex.Message);
             }
         }
 
         private void deleteTeacherButton_Click(object sender, EventArgs e)
         {
-            if (teachersGridView.SelectedRows.Count > 0)
+            try
             {
-                using (var conn = DBUtils.GetDBConnection())
+                if (teachersGridView.SelectedRows.Count > 0)
                 {
-                    conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Teachers WHERE TeacherID=@TeacherID", conn);
-                    cmd.Parameters.AddWithValue("@TeacherID", teachersGridView.SelectedRows[0].Cells["TeacherID"].Value);
-                    cmd.ExecuteNonQuery();
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("DELETE FROM Teachers WHERE TeacherID=@TeacherID", conn);
+                        cmd.Parameters.AddWithValue("@TeacherID", teachersGridView.SelectedRows[0].Cells["TeacherID"].Value);
+                        cmd.ExecuteNonQuery();
 
-                    MySqlCommand authCmd = new MySqlCommand("DELETE FROM Authorization WHERE TeacherIdentifier=@TeacherIdentifier", conn);
-                    authCmd.Parameters.AddWithValue("@TeacherIdentifier", teachersGridView.SelectedRows[0].Cells["TeacherIdentifier"].Value);
-                    authCmd.ExecuteNonQuery();
+                        MySqlCommand authCmd = new MySqlCommand("DELETE FROM Authorization WHERE TeacherIdentifier=@TeacherIdentifier", conn);
+                        authCmd.Parameters.AddWithValue("@TeacherIdentifier", teachersGridView.SelectedRows[0].Cells["TeacherIdentifier"].Value);
+                        authCmd.ExecuteNonQuery();
+                    }
+                    LoadTeachersData();
                 }
-                LoadTeachersData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при видаленні вчителя: " + ex.Message);
             }
         }
 
         private void filterTeachersButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
+            try
             {
-                conn.Open();
-                string query = "SELECT * FROM Teachers WHERE LastName LIKE @Filter OR FirstName LIKE @Filter";
-                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
-                da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filterTeachersTextBox.Text + "%");
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                teachersGridView.DataSource = dt;
+                using (var conn = DBUtils.GetDBConnection())
+                {
+                    conn.Open();
+                    string query = "SELECT * FROM Teachers WHERE LastName LIKE @Filter OR FirstName LIKE @Filter";
+                    MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filterTeachersTextBox.Text + "%");
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    teachersGridView.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при фільтрації вчителів: " + ex.Message);
             }
         }
+
 
         private void teachersGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -415,28 +471,12 @@ namespace SchoolManagementSystem
         // Додавання, оновлення, видалення та фільтрація оцінок
         private void addGradeButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
-            {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("INSERT INTO Grades (StudentID, TeacherID, Grade, DateAssigned) VALUES (@StudentID, @TeacherID, @Grade, @DateAssigned)", conn);
-                cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
-                cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
-                cmd.Parameters.AddWithValue("@Grade", gradeTextBox.Text);
-                cmd.Parameters.AddWithValue("@DateAssigned", dateAssignedPicker.Value.ToString("yyyy-MM-dd"));
-                cmd.ExecuteNonQuery();
-            }
-            LoadGradesData();
-        }
-
-        private void updateGradeButton_Click(object sender, EventArgs e)
-        {
-            if (gradesGridView.SelectedRows.Count > 0)
+            try
             {
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("UPDATE Grades SET StudentID=@StudentID, TeacherID=@TeacherID, Grade=@Grade, DateAssigned=@DateAssigned WHERE GradeID=@GradeID", conn);
-                    cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO Grades (StudentID, TeacherID, Grade, DateAssigned) VALUES (@StudentID, @TeacherID, @Grade, @DateAssigned)", conn);
                     cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
                     cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
                     cmd.Parameters.AddWithValue("@Grade", gradeTextBox.Text);
@@ -445,34 +485,78 @@ namespace SchoolManagementSystem
                 }
                 LoadGradesData();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при додаванні оцінки: " + ex.Message);
+            }
+        }
+
+        private void updateGradeButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (gradesGridView.SelectedRows.Count > 0)
+                {
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("UPDATE Grades SET StudentID=@StudentID, TeacherID=@TeacherID, Grade=@Grade, DateAssigned=@DateAssigned WHERE GradeID=@GradeID", conn);
+                        cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
+                        cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
+                        cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
+                        cmd.Parameters.AddWithValue("@Grade", gradeTextBox.Text);
+                        cmd.Parameters.AddWithValue("@DateAssigned", dateAssignedPicker.Value.ToString("yyyy-MM-dd"));
+                        cmd.ExecuteNonQuery();
+                    }
+                    LoadGradesData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при оновленні оцінки: " + ex.Message);
+            }
         }
 
         private void deleteGradeButton_Click(object sender, EventArgs e)
         {
-            if (gradesGridView.SelectedRows.Count > 0)
+            try
             {
-                using (var conn = DBUtils.GetDBConnection())
+                if (gradesGridView.SelectedRows.Count > 0)
                 {
-                    conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Grades WHERE GradeID=@GradeID", conn);
-                    cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
-                    cmd.ExecuteNonQuery();
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("DELETE FROM Grades WHERE GradeID=@GradeID", conn);
+                        cmd.Parameters.AddWithValue("@GradeID", gradesGridView.SelectedRows[0].Cells["GradeID"].Value);
+                        cmd.ExecuteNonQuery();
+                    }
+                    LoadGradesData();
                 }
-                LoadGradesData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при видаленні оцінки: " + ex.Message);
             }
         }
 
         private void filterGradesButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
+            try
             {
-                conn.Open();
-                string query = "SELECT * FROM Grades WHERE StudentID LIKE @Filter OR TeacherID LIKE @Filter";
-                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
-                da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filterGradesTextBox.Text + "%");
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                gradesGridView.DataSource = dt;
+                using (var conn = DBUtils.GetDBConnection())
+                {
+                    conn.Open();
+                    string query = "SELECT * FROM Grades WHERE StudentID LIKE @Filter OR TeacherID LIKE @Filter";
+                    MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
+                    da.SelectCommand.Parameters.AddWithValue("@Filter", "%" + filterGradesTextBox.Text + "%");
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    gradesGridView.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при фільтрації оцінок: " + ex.Message);
             }
         }
 
@@ -496,105 +580,133 @@ namespace SchoolManagementSystem
         // Додавання, оновлення, видалення та фільтрація завдань
         private void addTaskButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
-            {
-                conn.Open();
-
-                // Отримуємо список студентів за класом та групою
-                MySqlCommand getStudentsCmd = new MySqlCommand("SELECT StudentID FROM Students WHERE Class=@Class AND StudentGroup=@StudentGroup", conn);
-                getStudentsCmd.Parameters.AddWithValue("@Class", classTextBoxTask.Text);
-                getStudentsCmd.Parameters.AddWithValue("@StudentGroup", groupTextBoxTask.Text);
-
-                MySqlDataReader reader = getStudentsCmd.ExecuteReader();
-                var studentIds = new List<int>();
-                while (reader.Read())
-                {
-                    studentIds.Add(reader.GetInt32("StudentID"));
-                }
-                reader.Close();
-
-                // Додаємо завдання для кожного студента з цього списку
-                foreach (var studentId in studentIds)
-                {
-                    MySqlCommand cmd = new MySqlCommand("INSERT INTO Tasks (TaskType, Description, Status, CreationDate, CompletionDate, StudentID, TeacherID) VALUES (@TaskType, @Description, @Status, @CreationDate, @CompletionDate, @StudentID, @TeacherID)", conn);
-                    cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
-                    cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
-                    cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
-                    cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@StudentID", studentId);
-                    cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            LoadTasksData();
-        }
-
-        private void updateTaskButton_Click(object sender, EventArgs e)
-        {
-            if (tasksGridView.SelectedRows.Count > 0)
+            try
             {
                 using (var conn = DBUtils.GetDBConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskType=@TaskType, Description=@Description, Status=@Status, CreationDate=@CreationDate, CompletionDate=@CompletionDate, StudentID=@StudentID, TeacherID=@TeacherID WHERE TaskID=@TaskID", conn);
-                    cmd.Parameters.AddWithValue("@TaskID", tasksGridView.SelectedRows[0].Cells["TaskID"].Value);
-                    cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
-                    cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
-                    cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
-                    cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
-                    cmd.Parameters.AddWithValue("@StudentID", tasksGridView.SelectedRows[0].Cells["StudentID"].Value);
-                    cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
-                    cmd.ExecuteNonQuery();
+
+                    // Отримуємо список студентів за класом та групою
+                    MySqlCommand getStudentsCmd = new MySqlCommand("SELECT StudentID FROM Students WHERE Class=@Class AND StudentGroup=@StudentGroup", conn);
+                    getStudentsCmd.Parameters.AddWithValue("@Class", classTextBoxTask.Text);
+                    getStudentsCmd.Parameters.AddWithValue("@StudentGroup", groupTextBoxTask.Text);
+
+                    MySqlDataReader reader = getStudentsCmd.ExecuteReader();
+                    var studentIds = new List<int>();
+                    while (reader.Read())
+                    {
+                        studentIds.Add(reader.GetInt32("StudentID"));
+                    }
+                    reader.Close();
+
+                    // Додаємо завдання для кожного студента з цього списку
+                    foreach (var studentId in studentIds)
+                    {
+                        MySqlCommand cmd = new MySqlCommand("INSERT INTO Tasks (TaskType, Description, Status, CreationDate, CompletionDate, StudentID, TeacherID) VALUES (@TaskType, @Description, @Status, @CreationDate, @CompletionDate, @StudentID, @TeacherID)", conn);
+                        cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
+                        cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
+                        cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
+                        cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@StudentID", studentId);
+                        cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
+                        cmd.ExecuteNonQuery();
+                    }
                 }
                 LoadTasksData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при додаванні завдання: " + ex.Message);
+            }
+        }
+
+        private void updateTaskButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (tasksGridView.SelectedRows.Count > 0)
+                {
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("UPDATE Tasks SET TaskType=@TaskType, Description=@Description, Status=@Status, CreationDate=@CreationDate, CompletionDate=@CompletionDate, StudentID=@StudentID, TeacherID=@TeacherID WHERE TaskID=@TaskID", conn);
+                        cmd.Parameters.AddWithValue("@TaskID", tasksGridView.SelectedRows[0].Cells["TaskID"].Value);
+                        cmd.Parameters.AddWithValue("@TaskType", taskTypeTextBox.Text);
+                        cmd.Parameters.AddWithValue("@Description", descriptionTextBox.Text);
+                        cmd.Parameters.AddWithValue("@Status", statusTextBox.Text);
+                        cmd.Parameters.AddWithValue("@CreationDate", creationDatePicker.Value.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@CompletionDate", completionDatePicker.Value.ToString("yyyy-MM-dd"));
+                        cmd.Parameters.AddWithValue("@StudentID", tasksGridView.SelectedRows[0].Cells["StudentID"].Value);
+                        cmd.Parameters.AddWithValue("@TeacherID", userId); // Використання id вчителя
+                        cmd.ExecuteNonQuery();
+                    }
+                    LoadTasksData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при оновленні завдання: " + ex.Message);
             }
         }
 
         private void deleteTaskButton_Click(object sender, EventArgs e)
         {
-            if (tasksGridView.SelectedRows.Count > 0)
+            try
             {
-                using (var conn = DBUtils.GetDBConnection())
+                if (tasksGridView.SelectedRows.Count > 0)
                 {
-                    conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("DELETE FROM Tasks WHERE TaskID=@TaskID", conn);
-                    cmd.Parameters.AddWithValue("@TaskID", tasksGridView.SelectedRows[0].Cells["TaskID"].Value);
-                    cmd.ExecuteNonQuery();
+                    using (var conn = DBUtils.GetDBConnection())
+                    {
+                        conn.Open();
+                        MySqlCommand cmd = new MySqlCommand("DELETE FROM Tasks WHERE TaskID=@TaskID", conn);
+                        cmd.Parameters.AddWithValue("@TaskID", tasksGridView.SelectedRows[0].Cells["TaskID"].Value);
+                        cmd.ExecuteNonQuery();
+                    }
+                    LoadTasksData();
                 }
-                LoadTasksData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при видаленні завдання: " + ex.Message);
             }
         }
 
         private void filterTasksButton_Click(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
+            try
             {
-                conn.Open();
-                string query = @"
-                    SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
-                           t.StudentID, t.TeacherID, s.Class, s.StudentGroup
-                    FROM Tasks t
-                    JOIN Students s ON t.StudentID = s.StudentID
-                    WHERE s.Class = @Class AND s.StudentGroup = @StudentGroup";
-                MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
-
-                string[] filterParts = filterTasksTextBox.Text.Split(new char[] { ' ' }, 2);
-                if (filterParts.Length == 2)
+                using (var conn = DBUtils.GetDBConnection())
                 {
-                    da.SelectCommand.Parameters.AddWithValue("@Class", filterParts[0]);
-                    da.SelectCommand.Parameters.AddWithValue("@StudentGroup", filterParts[1]);
-                }
-                else
-                {
-                    MessageBox.Show("Будь ласка, введіть клас та групу у правильному форматі (наприклад, '10 A').");
-                    return;
-                }
+                    conn.Open();
+                    string query = @"
+                SELECT t.TaskID, t.TaskType, t.Description, t.Status, t.CreationDate, t.CompletionDate, 
+                       t.StudentID, t.TeacherID, s.Class, s.StudentGroup
+                FROM Tasks t
+                JOIN Students s ON t.StudentID = s.StudentID
+                WHERE s.Class = @Class AND s.StudentGroup = @StudentGroup";
+                    MySqlDataAdapter da = new MySqlDataAdapter(query, conn);
 
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                tasksGridView.DataSource = dt;
+                    string[] filterParts = filterTasksTextBox.Text.Split(new char[] { ' ' }, 2);
+                    if (filterParts.Length == 2)
+                    {
+                        da.SelectCommand.Parameters.AddWithValue("@Class", filterParts[0]);
+                        da.SelectCommand.Parameters.AddWithValue("@StudentGroup", filterParts[1]);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Будь ласка, введіть клас та групу у правильному форматі (наприклад, '10 A').");
+                        return;
+                    }
+
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    tasksGridView.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при фільтрації завдань: " + ex.Message);
             }
         }
 
@@ -616,35 +728,49 @@ namespace SchoolManagementSystem
 
         private void studentIdTextBox_Leave(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
+            try
             {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT LastName, FirstName, Class, StudentGroup FROM Students WHERE StudentID = @StudentID", conn);
-                cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
-                MySqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (var conn = DBUtils.GetDBConnection())
                 {
-                    studentNameTextBox.Text = reader["LastName"].ToString() + " " + reader["FirstName"].ToString();
-                    studentClassTextBox.Text = reader["Class"].ToString();
-                    studentGroupTextBox.Text = reader["StudentGroup"].ToString();
+                    conn.Open();
+                    MySqlCommand cmd = new MySqlCommand("SELECT LastName, FirstName, Class, StudentGroup FROM Students WHERE StudentID = @StudentID", conn);
+                    cmd.Parameters.AddWithValue("@StudentID", studentIdTextBox.Text);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        studentNameTextBox.Text = reader["LastName"].ToString() + " " + reader["FirstName"].ToString();
+                        studentClassTextBox.Text = reader["Class"].ToString();
+                        studentGroupTextBox.Text = reader["StudentGroup"].ToString();
+                    }
+                    reader.Close();
                 }
-                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                
             }
         }
 
         private void teacherIdTextBox_Leave(object sender, EventArgs e)
         {
-            using (var conn = DBUtils.GetDBConnection())
+            try
             {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT LastName, FirstName FROM Teachers WHERE TeacherID = @TeacherID", conn);
-                cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
-                MySqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (var conn = DBUtils.GetDBConnection())
                 {
-                    teacherNameTextBox.Text = reader["LastName"].ToString() + " " + reader["FirstName"].ToString();
+                    conn.Open();
+                    MySqlCommand cmd = new MySqlCommand("SELECT LastName, FirstName FROM Teachers WHERE TeacherID = @TeacherID", conn);
+                    cmd.Parameters.AddWithValue("@TeacherID", teacherIdTextBox.Text);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        teacherNameTextBox.Text = reader["LastName"].ToString() + " " + reader["FirstName"].ToString();
+                    }
+                    reader.Close();
                 }
-                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Сталася помилка при отриманні інформації про вчителя: " + ex.Message);
             }
         }
 
